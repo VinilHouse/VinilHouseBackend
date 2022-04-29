@@ -44,6 +44,7 @@ class MemberServiceTest {
     @DisplayName("단순 회원 가입 테스트")
     void register() {
         Member findMember = memberService.findMemberById(MEMBER_ID);
+        assertThat(findMember).isNotNull();
         assertThat(findMember.getEmail()).isEqualTo(MEMBER_EMAIL);
     }
 
@@ -72,8 +73,10 @@ class MemberServiceTest {
             .build();
 
         memberService.update(member);
-        Member findMember = memberService.findMemberByEmail(MEMBER_ID);
+        Member findMember = memberService.findMemberByEmail(MEMBER_EMAIL);
 
+        assertThat(findMember).isNotNull();
+        assertThat(findMember.getPassword()).isEqualTo(newPassword);
         assertThat(findMember).isEqualTo(member);
     }
 
@@ -90,12 +93,14 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("단순 회원 ID로 조회 테스트")
     void findMemberById() {
         assertThat(memberService.findMemberById(MEMBER_ID)).isNotNull();
         assertThat(memberService.findMemberById(MEMBER_ID + GARBAGE_VALUE)).isNull();
     }
 
     @Test
+    @DisplayName("단순 회원 EMAIL 로 조회 테스트")
     void findMemberByEmail() {
         assertThat(memberService.findMemberByEmail(MEMBER_EMAIL)).isNotNull();
         assertThat(memberService.findMemberByEmail(MEMBER_EMAIL + GARBAGE_VALUE)).isNull();
