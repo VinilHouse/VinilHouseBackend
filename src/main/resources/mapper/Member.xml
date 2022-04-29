@@ -11,11 +11,12 @@
   <update id="update" parameterType="Member">
     update member
     set
+    id = id
     <if test="password != '' and password != null">
-      password = #{password},
+      ,password = #{password}
     </if>
     <if test="email != '' and email != null">
-      email = #{email}
+      ,email = #{email}
     </if>
     where id = #{id}
   </update>
