@@ -81,6 +81,24 @@ class MemberServiceTest {
     }
 
     @Test
+    @DisplayName("비밀번호 변경(업데이트) 테스트 - 이메일, 비밀번호가 null 인 경우")
+    void updateOnlyNullValue() {
+
+        Member member = Member.builder()
+            .id(MEMBER_ID)
+            .password(null)
+            .email(null)
+            .build();
+
+        memberService.update(member);
+        Member findMember = memberService.findMemberByEmail(MEMBER_EMAIL);
+
+        assertThat(findMember).isNotNull();
+        assertThat(findMember.getPassword()).isEqualTo(MEMBER_PASSWORD);
+        assertThat(findMember.getEmail()).isEqualTo(MEMBER_EMAIL);
+    }
+
+    @Test
     @DisplayName("회원 삭제 테스트")
     void delete() {
         Member findMember = memberService.findMemberById(MEMBER_ID);
