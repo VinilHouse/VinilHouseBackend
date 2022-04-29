@@ -8,7 +8,7 @@ public interface MemberService {
 
     void register(Member member);
 
-    boolean login(String id, String pass);
+    boolean login(String id, String password);
 
     void update(Member member);
 
