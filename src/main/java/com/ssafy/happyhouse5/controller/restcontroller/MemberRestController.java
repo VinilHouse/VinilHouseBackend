@@ -1,7 +1,11 @@
 package com.ssafy.happyhouse5.controller.restcontroller;
 
-import static com.ssafy.happyhouse5.constant.MemberConst.*;
-import static org.springframework.http.HttpStatus.*;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_BINDING_ERROR;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_LOGIN_FAIL_MSG;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_LOGOUT_FAIL_MSG;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_REQUIRED_LOGIN;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_SESSION;
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 import com.ssafy.happyhouse5.dto.member.Member;
 import com.ssafy.happyhouse5.dto.member.MemberLoginDto;
@@ -16,12 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Slf4j
 @RequestMapping("/api/members")
@@ -76,12 +79,18 @@ public class MemberRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<?> update(
-        @SessionAttribute Member member,
-        @RequestBody MemberUpdateDto memberUpdateDto) {
-        if (member == null) {
+        HttpSession httpSession,
+        @RequestBody(required = false) MemberUpdateDto memberUpdateDto) {
+
+        MemberSession member = (MemberSession) httpSession.getAttribute(MEMBER_SESSION);
+        if (httpSession.isNew() || member == null) {
             return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_REQUIRED_LOGIN);
+        }
+
+        if(memberUpdateDto == null){
+            return ResponseEntity.ok().build();
         }
 
         memberService.update(
