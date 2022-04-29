@@ -58,15 +58,17 @@ public class MemberRestController {
 
         checkHasBindingError(bindingResult);
 
-        if (memberService.login(memberLoginDto.getId(), memberLoginDto.getPassword())) {
-            Member member = memberService.findMemberById(memberLoginDto.getId());
-            session.setAttribute(MEMBER_SESSION, MemberSession.builder()
+        if (!memberService.login(memberLoginDto.getId(), memberLoginDto.getPassword())) {
+            return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_LOGIN_FAIL_MSG);
+        }
+
+        Member member = memberService.findMemberById(memberLoginDto.getId());
+        session.setAttribute(MEMBER_SESSION,
+            MemberSession.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .build());
-            return ResponseEntity.ok().build();
-        }
-        return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_LOGIN_FAIL_MSG);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/logout")
