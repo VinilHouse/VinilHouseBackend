@@ -73,6 +73,8 @@ public class BoardRestController {
         return ResponseEntity.ok(board);
     }
 
+    // TODO : require: class for response data (BoardResponse.java ... etc)
+    // TODO : require: interceptor for processing auth (and session attr)
     @GetMapping
     @ApiOperation(value = "게시글 조회", notes = "title, content, member 값을 쿼리로 주어 조회할 수 있다. 쿼리의 개수는 0개 또는 1개여야 한다.")
     public ResponseEntity<?> find(
