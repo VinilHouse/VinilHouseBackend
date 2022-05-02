@@ -9,7 +9,7 @@ public interface BoardService {
 
     void create(Board board);
 
-    void update(Member memberId, Board board);
+    void update(String memberId, Board board);
 
     Board selectById(int id);
 
