@@ -1,4 +1,4 @@
-package com.ssafy.happyhouse5.dto.member;
+package com.ssafy.happyhouse5.dto.board;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,10 +14,11 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Board {
 
     @Setter(AccessLevel.NONE)
-    private String id;
-    private String password;
-    private String email;
+    private int id;
+    private String title;
+    private String content;
+    private String memberId;
 }
