@@ -8,3 +8,7 @@ spring:
 mybatis:
   mapper-locations: classpath:/mapper/**/*.xml
   type-aliases-package: com.ssafy.happyhouse5.dto
+
+logging:
+  level:
+    com.ssafy.happyhouse5: debug
