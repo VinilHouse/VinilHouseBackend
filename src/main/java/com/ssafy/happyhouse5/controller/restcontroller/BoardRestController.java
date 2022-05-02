@@ -30,10 +30,6 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Slf4j
 @RequestMapping("/api/boards")
-@CrossOrigin(originPatterns = {
-    "http://127.0.0.1:5500/",
-    "http://localhost:5500/"
-}, allowCredentials = "true")
 @RestController
 @RequiredArgsConstructor
 public class BoardRestController {
