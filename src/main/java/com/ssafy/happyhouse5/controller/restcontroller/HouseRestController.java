@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HouseRestController {
 
-    private HouseService houseService;
+    private final HouseService houseService;
 
     @GetMapping("/infos")
     public ResponseEntity<List<HouseInfo>> getHouseInfos(@RequestParam String dongCode) {
