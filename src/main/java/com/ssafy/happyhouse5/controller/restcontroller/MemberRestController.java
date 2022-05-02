@@ -2,7 +2,6 @@ package com.ssafy.happyhouse5.controller.restcontroller;
 
 import static com.ssafy.happyhouse5.constant.MemberConst.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 import com.ssafy.happyhouse5.dto.member.Member;
 import com.ssafy.happyhouse5.dto.member.MemberLoginDto;

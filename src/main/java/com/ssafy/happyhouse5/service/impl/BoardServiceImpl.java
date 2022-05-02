@@ -27,7 +27,7 @@ public class BoardServiceImpl implements BoardService {
     @Transactional
     public void update(String memberId, Board board) {
         Board find = getBoardIfExists(board.getId());
-        if(!find.getMemberId().equals(memberId)){
+        if (!find.getMemberId().equals(memberId)) {
             throw new IllegalArgumentException(WRITER_ONLY_MODIFY);
         }
         boardDao.update(board);
@@ -52,7 +52,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<Board> findByOption(BoardSearchOption boardSearchOption, String query) {
-        switch(boardSearchOption){
+        switch (boardSearchOption) {
             case LIKE_TITLE:
                 return boardDao.findLikeTitle(query);
             case LIKE_CONTENT:
@@ -65,7 +65,7 @@ public class BoardServiceImpl implements BoardService {
 
     private Board getBoardIfExists(int boardId) {
         Board board = boardDao.selectById(boardId);
-        if(board == null){
+        if (board == null) {
             throw new IllegalArgumentException(BOARD_NOT_FOUND);
         }
         return board;
