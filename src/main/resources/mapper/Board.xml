@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssafy.happyhouse5.dao.BoardDao">
+  <insert id="register" parameterType="Board">
+    insert into board
+    values (#{title}, #{content}, #{memberId})
+  </insert>
+
+  <update id="update" parameterType="Board">
+    update board
+    set
+    id = id
+    <if test="title != null and title != ''">
+      title = #{title}
+    </if>
+    <if test="content != null and content != ''">
+      title = #{content}
+    </if>
+    where id = #{id}
+  </update>
+
+  <delete id="delete">
+    delete
+    from board
+    where id = #{id}
+  </delete>
+
+  <select id="selectById" parameterType="string" resultType="Board">
+    select *
+    from board
+    where id = #{id}
+  </select>
+
+  <select id="findLikeTitle" parameterType="string" resultType="Board">
+    select *
+    from board
+    where title like concat('%', #{title}, '%')
+  </select>
+
+  <select id="findLikeContent" parameterType="string" resultType="Board">
+    select *
+    from board
+    where content like concat('%', #{content}, '%')
+  </select>
+
+  <select id="findByMemberId" parameterType="string" resultType="Board">
+    select *
+    from board
+    where member_id = #{memberId}
+  </select>
+
+  <select id="selectAll" resultType="Board">
+    select *
+    from board
+  </select>
+</mapper>
