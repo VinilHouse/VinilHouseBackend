@@ -13,7 +13,7 @@ public interface BoardDao {
 
     void delete(Board board);
 
-    Board selectById(String id);
+    Board selectById(int id);
 
     List<Board> findLikeTitle(String id);
 
