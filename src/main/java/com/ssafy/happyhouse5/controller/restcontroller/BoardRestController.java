@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,6 +30,10 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Slf4j
 @RequestMapping("/api/boards")
+@CrossOrigin(originPatterns = {
+    "http://127.0.0.1:5500/",
+    "http://localhost:5500/"
+}, allowCredentials = "true")
 @RestController
 @RequiredArgsConstructor
 public class BoardRestController {
@@ -38,7 +43,7 @@ public class BoardRestController {
     private final OptionMapper optionMapper;
 
     @PostMapping
-    public ResponseEntity<?> create(
+    public ResponseEntity<Void> create(
         @Validated @RequestBody BoardRegisterDto boardRegisterDto,
         @SessionAttribute(MEMBER_SESSION) MemberSession memberSession) {
         Board board = Board.builder()
@@ -51,7 +56,7 @@ public class BoardRestController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<?> update(
+    public ResponseEntity<Void> update(
         @PathVariable int boardId,
         @Validated @RequestBody BoardUpdateDto boardUpdateDto,
         @SessionAttribute(MEMBER_SESSION) MemberSession memberSession) {
@@ -65,9 +70,9 @@ public class BoardRestController {
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<Board> detail(@PathVariable int boardId){
+    public ResponseEntity<Board> detail(@PathVariable int boardId) {
         Board board = boardService.selectById(boardId);
-        if(board == null){
+        if (board == null) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(board);
@@ -78,13 +83,14 @@ public class BoardRestController {
     @GetMapping
     @ApiOperation(value = "게시글 조회", notes = "title, content, member 값을 쿼리로 주어 조회할 수 있다. 쿼리의 개수는 0개 또는 1개여야 한다.")
     public ResponseEntity<?> find(
-        @RequestParam Map<String, String> map){
+        @RequestParam Map<String, String> map) {
+        log.debug("find called. map = {}", map);
 
-        if(map == null || map.size() == 0){
+        if (map == null || map.size() == 0) {
             return ResponseEntity.ok(boardService.findAll());
         }
 
-        if(map.size() != 1){
+        if (map.size() != 1) {
             return ResponseEntity.badRequest().body(INVALID_SIZE_OF_QUERY);
         }
 
@@ -94,7 +100,7 @@ public class BoardRestController {
             .orElseThrow(IllegalArgumentException::new);
 
         BoardSearchOption option = optionMapper.get(queryKey);
-        if(option == null){
+        if (option == null) {
             return ResponseEntity.badRequest().body(NOT_ALLOWED_FIND_QUERY);
         }
 
@@ -102,7 +108,7 @@ public class BoardRestController {
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<?> delete(@PathVariable int boardId){
+    public ResponseEntity<Void> delete(@PathVariable int boardId) {
         boardService.delete(boardId);
         return ResponseEntity.ok().build();
     }
