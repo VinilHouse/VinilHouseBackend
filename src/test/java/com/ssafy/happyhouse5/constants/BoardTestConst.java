@@ -1,4 +1,4 @@
-package com.ssafy.happyhouse5.constfortest;
+package com.ssafy.happyhouse5.constants;
 
 import java.util.UUID;
 

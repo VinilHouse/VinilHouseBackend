@@ -1,6 +1,6 @@
 package com.ssafy.happyhouse5.dao;
 
-import static com.ssafy.happyhouse5.constfortest.BoardTestConst.*;
+import static com.ssafy.happyhouse5.constants.BoardTestConst.*;
 import static org.assertj.core.api.Assertions.*;
 
 import com.ssafy.happyhouse5.dto.board.Board;
