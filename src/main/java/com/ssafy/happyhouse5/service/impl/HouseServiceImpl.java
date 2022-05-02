@@ -6,24 +6,16 @@ import com.ssafy.happyhouse5.dto.house.HouseDeal;
 import com.ssafy.happyhouse5.dto.house.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class HouseServiceImpl implements HouseService {
 
-    private HouseInfoDao houseInfoDao;
-    private HouseDealDao houseDealDao;
-
-    @Autowired
-    public void setHouseInfoDao(HouseInfoDao houseInfoDao) {
-        this.houseInfoDao = houseInfoDao;
-    }
-
-    @Autowired
-    public void setHouseDealDao(HouseDealDao houseDealDao) {
-        this.houseDealDao = houseDealDao;
-    }
+    private final HouseInfoDao houseInfoDao;
+    private final HouseDealDao houseDealDao;
 
     @Override
     public List<HouseInfo> findHouseInfoByDongCode(String dongCode) {
