@@ -34,6 +34,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional
     public void delete(int id) {
         getBoardIfExists(id);
         boardDao.delete(id);
