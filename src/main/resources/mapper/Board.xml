@@ -10,7 +10,7 @@
     <result column="member_id" property="memberId"/>
   </resultMap>
 
-  <insert id="create" parameterType="Board">
+  <insert id="create" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
     insert into board(title, content, member_id)
     values (#{title}, #{content}, #{memberId})
   </insert>
@@ -28,7 +28,7 @@
     where id = #{id}
   </update>
 
-  <delete id="delete">
+  <delete id="delete" parameterType="int">
     delete
     from board
     where id = #{id}
