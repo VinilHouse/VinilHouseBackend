@@ -11,7 +11,7 @@ public interface BoardDao {
 
     void update(Board board);
 
-    void delete(Board board);
+    void delete(int boardId);
 
     Board selectById(int id);
 

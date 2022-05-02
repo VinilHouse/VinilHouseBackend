@@ -182,7 +182,7 @@ class BoardDaoTest {
         Board one = boards.get(0);
         int beforeSize = boards.size();
 
-        boardDao.delete(one);
+        boardDao.delete(one.getId());
         int afterSize = boardDao.findByMemberId(MEMBER_ID_1).size();
 
         assertThat(beforeSize - afterSize).isEqualTo(1);

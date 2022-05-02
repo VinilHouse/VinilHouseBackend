@@ -34,6 +34,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void delete(int id) {
+        getBoardIfExists(id);
+        boardDao.delete(id);
+    }
+
+    @Override
     public Board selectById(int id) {
         return boardDao.selectById(id);
     }
