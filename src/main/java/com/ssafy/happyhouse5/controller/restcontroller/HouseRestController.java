@@ -1,6 +1,8 @@
 package com.ssafy.happyhouse5.controller.restcontroller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,16 +13,12 @@ import com.ssafy.happyhouse5.dto.house.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import java.util.List;
 
-@RestController
 @RequestMapping("/api/house")
+@RestController
+@RequiredArgsConstructor
 public class HouseRestController {
 
     private HouseService houseService;
-
-    @Autowired
-    public void setHouseService(HouseService houseService) {
-        this.houseService = houseService;
-    }
 
     @GetMapping("/infos")
     public ResponseEntity<List<HouseInfo>> getHouseInfos(@RequestParam String dongCode) {
