@@ -3,13 +3,17 @@ package com.ssafy.happyhouse5.controller.restcontroller;
 import static com.ssafy.happyhouse5.constant.MemberConst.*;
 import static org.springframework.http.HttpStatus.*;
 
+import com.ssafy.happyhouse5.dto.board.Board;
 import com.ssafy.happyhouse5.dto.member.Member;
 import com.ssafy.happyhouse5.dto.member.MemberLoginDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberSession;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.service.BoardService;
 import com.ssafy.happyhouse5.service.MemberService;
+import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import java.net.URI;
+import java.util.List;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 @Slf4j
 @RequestMapping("/api/members")
@@ -32,6 +37,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberRestController {
 
     private final MemberService memberService;
+
+    private final BoardService boardService;
 
     @PostMapping
     public ResponseEntity<?> register(
@@ -109,8 +116,20 @@ public class MemberRestController {
         if (httpSession.isNew() || member == null) {
             return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_REQUIRED_LOGIN);
         }
+        List<Board> memberBoard = boardService.findByOption(BoardSearchOption.BY_MEMBER_ID,
+            member.getId());
+        for (Board board : memberBoard) {
+            boardService.delete(board.getId());
+        }
+
         memberService.delete(Member.builder().id(member.getId()).build());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<Member> getMemberInfo(
+        @SessionAttribute(MEMBER_SESSION) MemberSession memberSession){
+        return ResponseEntity.ok().body(memberService.findMemberById(memberSession.getId()));
     }
 
     @GetMapping("/id")
