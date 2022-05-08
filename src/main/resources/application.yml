@@ -13,10 +13,7 @@ spring:
         format_sql: true
         use_sql_comments: true
 
-mybatis:
-  mapper-locations: classpath:/mapper/**/*.xml
-  type-aliases-package: com.ssafy.happyhouse5.dto
-
 logging:
   level:
     com.ssafy.happyhouse5: debug
+    org.hibernate.SQL: debug
