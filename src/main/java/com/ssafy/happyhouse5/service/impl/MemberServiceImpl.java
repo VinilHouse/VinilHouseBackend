@@ -1,8 +1,14 @@
 package com.ssafy.happyhouse5.service.impl;
 
-import com.ssafy.happyhouse5.dao.MemberDao;
-import com.ssafy.happyhouse5.dto.member.Member;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_LOGIN_FAIL_MSG;
+import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_NOT_FOUND;
+
+import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
+import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,45 +18,57 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
-    private final MemberDao memberDao;
+    private final MemberRepository memberRepository;
 
     @Override
-    public boolean checkExists(String id) {
-        return memberDao.findById(id) != null;
+    @Transactional
+    public Long register(MemberRegisterDto memberRegisterDto) {
+        Member member = Member.builder()
+            .ident(memberRegisterDto.getIdent())
+            .password(memberRegisterDto.getPassword())
+            .email(memberRegisterDto.getEmail())
+            .build();
+        memberRepository.save(member);
+        return member.getId();
+    }
+
+    @Override
+    public boolean login(String ident, String password) {
+        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident),
+            MEMBER_LOGIN_FAIL_MSG).getPassword().equals(password);
     }
 
     @Override
     @Transactional
-    public void register(Member member) {
-        memberDao.register(member);
-    }
-
-    @Override
-    public boolean login(String id, String password) {
-        Member findMember = memberDao.findById(id);
-        if(findMember == null) return false;
-        return findMember.getPassword().equals(password);
+    public void update(Long id, MemberUpdateDto memberUpdateDto) {
+        Member member = checkExistAndGetMember(memberRepository.findById(id), MEMBER_NOT_FOUND);
+        member.setPassword(memberUpdateDto.getPassword());
+        member.setEmail(memberUpdateDto.getEmail());
     }
 
     @Override
     @Transactional
-    public void update(Member member) {
-        memberDao.update(member);
+    public void delete(Long id) {
+        memberRepository.deleteById(id);
     }
 
     @Override
-    @Transactional
-    public void delete(Member member) {
-        memberDao.delete(member);
+    public Member findMemberById(Long id) {
+        return checkExistAndGetMember(memberRepository.findById(id), MEMBER_NOT_FOUND);
     }
 
     @Override
-    public Member findMemberById(String id) {
-        return memberDao.findById(id);
+    public Member findMemberByIdent(String ident) {
+        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident), MEMBER_NOT_FOUND);
     }
 
     @Override
     public Member findMemberByEmail(String email) {
-        return memberDao.findByEmail(email);
+        return checkExistAndGetMember(memberRepository.findMemberByEmail(email), MEMBER_NOT_FOUND);
+    }
+
+    private Member checkExistAndGetMember(Optional<Member> memberRepository, String msg) {
+        return memberRepository.orElseThrow(
+            () -> new IllegalArgumentException(msg));
     }
 }

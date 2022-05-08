@@ -2,8 +2,13 @@ package com.ssafy.happyhouse5.service.impl;
 
 import static com.ssafy.happyhouse5.constant.BoardConst.*;
 
-import com.ssafy.happyhouse5.dao.BoardDao;
-import com.ssafy.happyhouse5.dto.board.Board;
+import com.ssafy.happyhouse5.constant.MemberConst;
+import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
+import com.ssafy.happyhouse5.dto.board.BoardUpdateDto;
+import com.ssafy.happyhouse5.entity.Board;
+import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.repository.BoardRepository;
+import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.BoardService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -15,59 +20,71 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardDao boardDao;
+    private final BoardRepository boardRepository;
+
+    private final MemberRepository memberRepository;
 
     @Override
     @Transactional
-    public void create(Board board) {
-        boardDao.create(board);
+    public Long create(Long memberId, BoardRegisterDto boardRegisterDto) {
+        Member member = memberRepository.findById(memberId).orElseThrow(
+            () -> new IllegalArgumentException(MemberConst.MEMBER_NOT_FOUND));
+
+        Board board = Board.builder()
+            .title(boardRegisterDto.getTitle())
+            .content(boardRegisterDto.getContent())
+            .member(member)
+            .build();
+
+        return boardRepository.save(board).getId();
     }
 
     @Override
     @Transactional
-    public void update(String memberId, Board board) {
-        Board find = getBoardIfExists(board.getId());
-        if (!find.getMemberId().equals(memberId)) {
+    public Long update(Long memberId, Long boardId, BoardUpdateDto boardUpdateDto) {
+        Board board = checkExistAndGetBoard(boardId, BOARD_NOT_FOUND);
+
+        if (!board.getMember().getId().equals(memberId)) {
             throw new IllegalArgumentException(WRITER_ONLY_MODIFY);
         }
-        boardDao.update(board);
+        board.setTitle(boardUpdateDto.getTitle());
+        board.setContent(boardUpdateDto.getContent());
+        return boardId;
     }
 
     @Override
     @Transactional
-    public void delete(int id) {
-        getBoardIfExists(id);
-        boardDao.delete(id);
+    public Long delete(Long id) {
+        Board board = checkExistAndGetBoard(id, BOARD_NOT_FOUND);
+        boardRepository.delete(board);
+        return board.getId();
+    }
+
+    private Board checkExistAndGetBoard(Long id, String msg) {
+        return boardRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException(msg));
     }
 
     @Override
-    public Board selectById(int id) {
-        return boardDao.selectById(id);
+    public Board selectById(Long id) {
+        return checkExistAndGetBoard(id, BOARD_NOT_FOUND);
     }
 
     @Override
     public List<Board> findAll() {
-        return boardDao.selectAll();
+        return boardRepository.findAll();
     }
 
     @Override
     public List<Board> findByOption(BoardSearchOption boardSearchOption, String query) {
         switch (boardSearchOption) {
             case LIKE_TITLE:
-                return boardDao.findLikeTitle(query);
+                return boardRepository.findLikeTitle(query);
             case LIKE_CONTENT:
-                return boardDao.findLikeContent(query);
+                return boardRepository.findLikeContent(query);
             case BY_MEMBER_ID:
-                return boardDao.findByMemberId(query);
+                return boardRepository.findByMemberId(query);
         }
         throw new RuntimeException();
-    }
-
-    private Board getBoardIfExists(int boardId) {
-        Board board = boardDao.selectById(boardId);
-        if (board == null) {
-            throw new IllegalArgumentException(BOARD_NOT_FOUND);
-        }
-        return board;
     }
 }
