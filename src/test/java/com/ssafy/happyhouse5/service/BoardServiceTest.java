@@ -3,12 +3,13 @@ package com.ssafy.happyhouse5.service;
 import static com.ssafy.happyhouse5.constants.BoardTestConst.*;
 import static org.assertj.core.api.Assertions.*;
 
-import com.ssafy.happyhouse5.dao.BoardDao;
-import com.ssafy.happyhouse5.dao.MemberDao;
-import com.ssafy.happyhouse5.dto.board.Board;
-import com.ssafy.happyhouse5.dto.member.Member;
+import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
+import com.ssafy.happyhouse5.entity.Board;
+import com.ssafy.happyhouse5.entity.Member;
 import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,46 +21,46 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class BoardServiceTest {
 
+    @PersistenceContext
+    EntityManager em;
+
     @Autowired
     BoardService boardService;
 
     @Autowired
-    BoardDao boardDao;
-
-    @Autowired
-    MemberDao memberDao;
+    MemberService memberService;
 
     @BeforeEach
     void before() {
         Member member1 = Member.builder()
-            .id(MEMBER_ID_1)
+            .ident(MEMBER_ID_1)
             .password(MEMBER_PASSWORD_1)
             .email(MEMBER_EMAIL_1)
             .build();
 
         Member member2 = Member.builder()
-            .id(MEMBER_ID_2)
+            .ident(MEMBER_ID_2)
             .password(MEMBER_PASSWORD_2)
             .email(MEMBER_EMAIL_2)
             .build();
 
-        memberDao.register(member1);
-        memberDao.register(member2);
+        em.persist(member1);
+        em.persist(member2);
 
         Board board1 = Board.builder()
             .title(BOARD_TITLE_1)
             .content(BOARD_CONTENT_1)
-            .memberId(MEMBER_ID_1)
+            .member(member1)
             .build();
 
         Board board2 = Board.builder()
             .title(BOARD_TITLE_2)
             .content(BOARD_CONTENT_2)
-            .memberId(MEMBER_ID_2)
+            .member(member2)
             .build();
 
-        boardDao.create(board1);
-        boardDao.create(board2);
+        em.persist(board1);
+        em.persist(board2);
     }
 
     @Test
@@ -68,20 +69,21 @@ class BoardServiceTest {
         String title = "new_TITLE";
         String content = "new_CONTENT";
 
-        Board board = Board.builder()
-            .title(title)
-            .content(content)
-            .memberId(MEMBER_ID_1)
-            .build();
+        BoardRegisterDto dto = new BoardRegisterDto();
+        dto.setTitle(title);
+        dto.setContent(content);
+
+        Member member = memberService.findMemberByIdent(MEMBER_ID_1);
 
         List<Board> before = boardService.findAll();
         assertThat(before).isNotNull();
 
         int beforeSize = before.size();
-        boardService.create(board);
+        boardService.create(member.getId(), dto);
 
         List<Board> after = boardService.findAll();
         assertThat(after).isNotNull();
+
         int afterSize = after.size();
         assertThat(afterSize - beforeSize).isEqualTo(1);
     }
