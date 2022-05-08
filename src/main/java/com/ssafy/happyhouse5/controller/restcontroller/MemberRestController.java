@@ -3,17 +3,13 @@ package com.ssafy.happyhouse5.controller.restcontroller;
 import static com.ssafy.happyhouse5.constant.MemberConst.*;
 import static org.springframework.http.HttpStatus.*;
 
-import com.ssafy.happyhouse5.dto.board.Board;
-import com.ssafy.happyhouse5.dto.member.Member;
 import com.ssafy.happyhouse5.dto.member.MemberLoginDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
-import com.ssafy.happyhouse5.dto.member.MemberSession;
+import com.ssafy.happyhouse5.dto.member.MemberResponseDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
-import com.ssafy.happyhouse5.service.BoardService;
+import com.ssafy.happyhouse5.entity.Member;
 import com.ssafy.happyhouse5.service.MemberService;
-import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import java.net.URI;
-import java.util.List;
 import javax.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +18,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,8 +34,6 @@ public class MemberRestController {
 
     private final MemberService memberService;
 
-    private final BoardService boardService;
-
     @PostMapping
     public ResponseEntity<?> register(
         @Validated @RequestBody MemberRegisterDto memberRegisterDto,
@@ -47,13 +41,9 @@ public class MemberRestController {
 
         checkHasBindingError(bindingResult);
 
-        memberService.register(Member.builder()
-            .id(memberRegisterDto.getId())
-            .password(memberRegisterDto.getPassword())
-            .email(memberRegisterDto.getEmail())
-            .build());
+        memberService.register(memberRegisterDto);
 
-        return ResponseEntity.created(URI.create("/api/members/" + memberRegisterDto.getId()))
+        return ResponseEntity.created(URI.create("/api/members/" + memberRegisterDto.getIdent()))
             .build();
     }
 
@@ -65,16 +55,12 @@ public class MemberRestController {
 
         checkHasBindingError(bindingResult);
 
-        if (!memberService.login(memberLoginDto.getId(), memberLoginDto.getPassword())) {
+        if (!memberService.login(memberLoginDto.getIdent(), memberLoginDto.getPassword())) {
             return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_LOGIN_FAIL_MSG);
         }
 
-        Member member = memberService.findMemberById(memberLoginDto.getId());
-        session.setAttribute(MEMBER_SESSION,
-            MemberSession.builder()
-                .id(member.getId())
-                .email(member.getEmail())
-                .build());
+        Member member = memberService.findMemberByIdent(memberLoginDto.getIdent());
+        session.setAttribute(MEMBER_SESSION, member.getId());
         return ResponseEntity.ok().build();
     }
 
@@ -87,67 +73,46 @@ public class MemberRestController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping
+    @PutMapping
     public ResponseEntity<?> update(
-        HttpSession httpSession,
-        @RequestBody(required = false) MemberUpdateDto memberUpdateDto) {
+        @SessionAttribute(MEMBER_SESSION) Long memberId,
+        @RequestBody MemberUpdateDto memberUpdateDto) {
 
-        MemberSession member = (MemberSession) httpSession.getAttribute(MEMBER_SESSION);
-        if (httpSession.isNew() || member == null) {
-            return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_REQUIRED_LOGIN);
-        }
-
-        if (memberUpdateDto == null) {
-            return ResponseEntity.ok().build();
-        }
-
-        memberService.update(
-            Member.builder()
-                .id(member.getId())
-                .password(memberUpdateDto.getPassword())
-                .email(memberUpdateDto.getEmail())
-                .build());
+        memberService.update(memberId, memberUpdateDto);
         return ResponseEntity.accepted().build();
     }
 
     @DeleteMapping
     public ResponseEntity<?> delete(HttpSession httpSession) {
-        MemberSession member = (MemberSession) httpSession.getAttribute(MEMBER_SESSION);
-        if (httpSession.isNew() || member == null) {
-            return ResponseEntity.status(UNAUTHORIZED).body(MEMBER_REQUIRED_LOGIN);
-        }
-        List<Board> memberBoard = boardService.findByOption(BoardSearchOption.BY_MEMBER_ID,
-            member.getId());
-        for (Board board : memberBoard) {
-            boardService.delete(board.getId());
-        }
-
-        memberService.delete(Member.builder().id(member.getId()).build());
+        Long memberId = (Long) httpSession.getAttribute(MEMBER_SESSION);
+        memberService.delete(memberId);
+        httpSession.invalidate();
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<Member> getMemberInfo(
-        @SessionAttribute(MEMBER_SESSION) MemberSession memberSession){
-        return ResponseEntity.ok().body(memberService.findMemberById(memberSession.getId()));
+    public ResponseEntity<MemberResponseDto> getMemberInfoBySession(
+        @SessionAttribute(MEMBER_SESSION) Long memberId){
+        return ResponseEntity.ok().body(
+            new MemberResponseDto(memberService.findMemberById(memberId)));
     }
 
     @GetMapping("/id")
-    public ResponseEntity<Member> findById(@RequestParam(required = false) String id) {
-        Member findMember = memberService.findMemberById(id);
+    public ResponseEntity<MemberResponseDto> findByIdent(@RequestParam(required = false) String ident) {
+        Member findMember = memberService.findMemberByIdent(ident);
         if (findMember == null) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(findMember, OK);
+        return new ResponseEntity<>(new MemberResponseDto(findMember), OK);
     }
 
     @GetMapping("/email")
-    public ResponseEntity<Member> findByEmail(@RequestParam(required = false) String email) {
+    public ResponseEntity<MemberResponseDto> findByEmail(@RequestParam(required = false) String email) {
         Member findMember = memberService.findMemberByEmail(email);
         if (findMember == null) {
             return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(findMember, OK);
+        return new ResponseEntity<>(new MemberResponseDto(findMember), OK);
     }
 
     private void checkHasBindingError(BindingResult bindingResult) {
