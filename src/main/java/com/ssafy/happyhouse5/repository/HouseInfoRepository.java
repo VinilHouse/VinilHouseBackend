@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface HouseInfoRepository extends JpaRepository<HouseInfo, Long> {
 
-    @Query("select i from HouseInfo i join fetch i.baseAddress b where b.dongName = :dongName")
-    List<HouseInfo> findHouseInfoByDongName(String dongName);
+    @Query("select i from HouseInfo i join fetch i.baseAddress b where b.dongCode = :dongCode")
+    List<HouseInfo> findHouseInfoByDongCode(String dongCode);
 }

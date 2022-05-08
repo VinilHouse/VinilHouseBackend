@@ -4,11 +4,12 @@ import com.ssafy.happyhouse5.dto.house.HouseDealResponseDto;
 import com.ssafy.happyhouse5.dto.house.HouseInfoResponseDto;
 import com.ssafy.happyhouse5.entity.HouseDeal;
 import com.ssafy.happyhouse5.entity.HouseInfo;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,10 +24,10 @@ public class HouseRestController {
     private final HouseService houseService;
 
     @GetMapping("/info")
-    public ResponseEntity<List<HouseInfoResponseDto>> getHouseInfos(@RequestParam String dongName) {
-        List<HouseInfo> houseInfoList = houseService.findHouseInfoByDongName(dongName);
+    public ResponseEntity<List<HouseInfoResponseDto>> getHouseInfos(@RequestParam String dongCode) {
+        List<HouseInfo> houseInfoList = houseService.findHouseInfoByDongCode(dongCode);
         if (houseInfoList.size() == 0) {
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }
         return ResponseEntity.ok(houseInfoList.stream()
             .map(HouseInfoResponseDto::new)

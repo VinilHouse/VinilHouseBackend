@@ -6,7 +6,6 @@ import com.ssafy.happyhouse5.repository.HouseDealRepository;
 import com.ssafy.happyhouse5.repository.HouseInfoRepository;
 import com.ssafy.happyhouse5.service.HouseService;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,8 @@ public class HouseServiceImpl implements HouseService {
     private final HouseInfoRepository houseInfoRepository;
 
     @Override
-
-    public List<HouseInfo> findHouseInfoByDongName(String dongName) {
-        return houseInfoRepository.findHouseInfoByDongName(dongName);
+    public List<HouseInfo> findHouseInfoByDongCode(String dongCode) {
+        return houseInfoRepository.findHouseInfoByDongCode(dongCode);
     }
 
     @Override

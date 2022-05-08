@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface HouseService {
 
-    List<HouseInfo> findHouseInfoByDongName(String dongCode);
+    List<HouseInfo> findHouseInfoByDongCode(String dongCode);
 
     List<HouseDeal> findHouseDealListByAptCode(Long aptCode);
 }
