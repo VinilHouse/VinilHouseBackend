@@ -9,7 +9,7 @@ import lombok.ToString;
 public class MemberRegisterDto {
 
     @NotBlank
-    private String id;
+    private String ident;
 
     @NotBlank
     private String password;

@@ -7,7 +7,7 @@ import lombok.Getter;
 public class MemberLoginDto {
 
     @NotBlank
-    private String id;
+    private String ident;
 
     @NotBlank
     private String password;
