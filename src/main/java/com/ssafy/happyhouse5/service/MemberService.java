@@ -1,20 +1,23 @@
 package com.ssafy.happyhouse5.service;
 
-import com.ssafy.happyhouse5.dto.member.Member;
+
+import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
+import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Member;
 
 public interface MemberService {
 
-    boolean checkExists(String id);
-
-    void register(Member member);
+    Long register(MemberRegisterDto memberRegisterDto);
 
     boolean login(String id, String password);
 
-    void update(Member member);
+    void update(Long id, MemberUpdateDto memberUpdateDto);
 
-    void delete(Member member);
+    void delete(Long id);
 
-    Member findMemberById(String id);
+    Member findMemberById(Long id);
+
+    Member findMemberByIdent(String ident);
 
     Member findMemberByEmail(String email);
 }

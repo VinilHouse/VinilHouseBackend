@@ -1,18 +1,20 @@
 package com.ssafy.happyhouse5.service;
 
-import com.ssafy.happyhouse5.dto.board.Board;
+import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
+import com.ssafy.happyhouse5.dto.board.BoardUpdateDto;
+import com.ssafy.happyhouse5.entity.Board;
 import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import java.util.List;
 
 public interface BoardService {
 
-    void create(Board board);
+    Long create(Long memberId, BoardRegisterDto boardRegisterDto);
 
-    void update(String memberId, Board board);
+    Long update(Long memberId, Long boardId, BoardUpdateDto boardUpdateDto);
 
-    void delete(int id);
+    Long delete(Long id);
 
-    Board selectById(int id);
+    Board selectById(Long id);
 
     List<Board> findAll();
 
