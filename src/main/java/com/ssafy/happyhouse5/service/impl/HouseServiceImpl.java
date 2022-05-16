@@ -18,8 +18,8 @@ public class HouseServiceImpl implements HouseService {
     private final HouseInfoRepository houseInfoRepository;
 
     @Override
-    public List<HouseInfo> findHouseInfoByDongCode(String dongCode) {
-        return houseInfoRepository.findHouseInfoByDongCode(dongCode);
+    public List<HouseInfo> findHouseInfoByDongName(String dongName) {
+        return houseInfoRepository.findHouseInfoBydongName(dongName);
     }
 
     @Override

@@ -24,8 +24,8 @@ public class HouseRestController {
     private final HouseService houseService;
 
     @GetMapping("/info")
-    public ResponseEntity<List<HouseInfoResponseDto>> getHouseInfos(@RequestParam String dongCode) {
-        List<HouseInfo> houseInfoList = houseService.findHouseInfoByDongCode(dongCode);
+    public ResponseEntity<List<HouseInfoResponseDto>> getHouseInfos(@RequestParam String dongName) {
+        List<HouseInfo> houseInfoList = houseService.findHouseInfoByDongName(dongName);
         if (houseInfoList.size() == 0) {
             return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }

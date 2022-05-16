@@ -6,6 +6,6 @@
   <select id="selectHouseList" parameterType="string" resultType="HouseInfo">
     select *
     from houseinfo
-    where dongcode = #{dongCode}
+    where dongName = #{dongName}
   </select>
 </mapper>

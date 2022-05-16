@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -21,14 +22,14 @@ import org.hibernate.annotations.BatchSize;
 @NoArgsConstructor(access = PROTECTED)
 public class HouseInfo {
 
-    @Id
+    @Id @GeneratedValue
     @Column(name = "apt_code")
     private Long aptCode;
 
     private String aptName;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "dong_code")
+    @JoinColumn(name = "dong_name")
     private BaseAddress baseAddress;
 
     private String buildYear;

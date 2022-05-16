@@ -15,9 +15,7 @@ import lombok.NoArgsConstructor;
 public class BaseAddress {
 
     @Id
-    @Column(name = "dong_code")
-    private String dongCode;
-
+    @Column(name = "dong_name")
     private String dongName;
 
     private String sidoName;

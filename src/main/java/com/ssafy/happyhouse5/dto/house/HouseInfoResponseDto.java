@@ -12,7 +12,6 @@ public class HouseInfoResponseDto {
 
     private Long aptCode;
     private String aptName;
-    private String dongCode;
     private String dongName;
     private int buildYear;
     private String jibun;
@@ -24,7 +23,6 @@ public class HouseInfoResponseDto {
     public HouseInfoResponseDto(HouseInfo houseInfo) {
         this.aptCode = houseInfo.getAptCode();
         this.aptName = houseInfo.getAptName();
-        this.dongCode = houseInfo.getBaseAddress().getDongCode();
         this.dongName = houseInfo.getBaseAddress().getDongName();
         this.buildYear = Integer.parseInt(houseInfo.getBuildYear());
         this.jibun = houseInfo.getJibun();
