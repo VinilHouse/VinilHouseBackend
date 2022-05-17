@@ -2,9 +2,11 @@ package com.ssafy.happyhouse5.entity;
 
 import static lombok.AccessLevel.*;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,4 +27,7 @@ public class BaseAddress {
     private String lat;
 
     private String lng;
+
+    @OneToMany(mappedBy = "baseAddress")
+    private List<HouseInfo> houseInfos;
 }

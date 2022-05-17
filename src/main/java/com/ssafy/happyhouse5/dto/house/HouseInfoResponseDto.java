@@ -18,7 +18,7 @@ public class HouseInfoResponseDto {
     private String lat;
     private String lng;
     private String img;
-    private String recentDealAmount;
+    private Double avgPrice;
 
     public HouseInfoResponseDto(HouseInfo houseInfo) {
         this.aptCode = houseInfo.getAptCode();
@@ -29,8 +29,6 @@ public class HouseInfoResponseDto {
         this.lat = houseInfo.getLat();
         this.lng = houseInfo.getLng();
         this.img = houseInfo.getImg();
-        if (houseInfo.getHouseDeals().size() != 0) {
-            this.recentDealAmount = houseInfo.getHouseDeals().get(0).getDealAmount();
-        }
+        this.avgPrice = houseInfo.getAvgPrice();
     }
 }

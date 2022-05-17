@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,5 +46,13 @@ public class HouseRestController {
         return ResponseEntity.ok(houseDealList.stream()
             .map(HouseDealResponseDto::new)
             .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<HouseInfoResponseDto>> searchHouseInfos(@RequestParam String prefix){
+        Pageable pageable = PageRequest.of(0, 20);
+        return ResponseEntity.ok(houseService.findHouseInfoByPrefix(prefix, pageable)
+            .map(HouseInfoResponseDto::new)
+            .toList());
     }
 }

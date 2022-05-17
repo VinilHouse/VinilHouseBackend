@@ -42,6 +42,8 @@ public class HouseInfo {
 
     private String img;
 
+    private Double avgPrice;
+
     @BatchSize(size = 200)
     @OneToMany(mappedBy = "id")
     @OrderBy("dealYear desc, dealMonth desc, dealDay desc")
