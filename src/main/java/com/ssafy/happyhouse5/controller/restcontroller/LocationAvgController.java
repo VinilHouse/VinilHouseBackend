@@ -1,0 +1,31 @@
+package com.ssafy.happyhouse5.controller.restcontroller;
+
+import com.ssafy.happyhouse5.dto.locationavg.LocationLevel;
+import com.ssafy.happyhouse5.dto.locationavg.LocationPriceDto;
+import com.ssafy.happyhouse5.service.LocationService;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Slf4j
+@RequestMapping("/api/location")
+@RestController
+@RequiredArgsConstructor
+public class LocationAvgController {
+
+    private final LocationService locationService;
+
+    @GetMapping
+    public ResponseEntity<List<LocationPriceDto>> getLocationAndAvgPrice(
+        @RequestParam LocationLevel level,
+        @RequestParam String query) {
+
+        log.debug("level : {}, query : {}", level, query);
+        return ResponseEntity.ok(locationService.getLocationPrice(level, query));
+    }
+}
