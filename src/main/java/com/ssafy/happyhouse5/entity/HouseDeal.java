@@ -25,7 +25,7 @@ public class HouseDeal {
     @ManyToOne(fetch = LAZY)
     private HouseInfo houseInfo;
 
-    private String dealAmount;
+    private Double dealAmount;
 
     private Integer dealYear;
 

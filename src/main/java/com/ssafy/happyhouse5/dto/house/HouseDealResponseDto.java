@@ -10,7 +10,7 @@ public class HouseDealResponseDto {
 
     private Long id;
     private Long aptCode;
-    private String dealAmount;
+    private Double dealAmount;
     private int dealYear;
     private int dealMonth;
     private int dealDay;
