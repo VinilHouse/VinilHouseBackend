@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +27,9 @@ public class LocationAvgController {
         @RequestParam String query) {
 
         log.debug("level : {}, query : {}", level, query);
+        if(level != LocationLevel.SIDO && !StringUtils.hasText(query)){
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok(locationService.getLocationPrice(level, query));
     }
 }
