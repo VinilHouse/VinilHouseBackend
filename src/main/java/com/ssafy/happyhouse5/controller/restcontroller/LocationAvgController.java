@@ -24,7 +24,7 @@ public class LocationAvgController {
     @GetMapping
     public ResponseEntity<List<LocationPriceDto>> getLocationAndAvgPrice(
         @RequestParam LocationLevel level,
-        @RequestParam String query) {
+        @RequestParam(required = false) String query) {
 
         log.debug("level : {}, query : {}", level, query);
         if(level != LocationLevel.SIDO && !StringUtils.hasText(query)){
