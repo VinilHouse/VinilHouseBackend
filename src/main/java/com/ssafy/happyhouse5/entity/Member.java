@@ -34,5 +34,5 @@ public class Member {
     private String email;
 
     @OneToMany(mappedBy = "member")
-    private List<Board> boards = new ArrayList<>();
+    private final List<Board> boards = new ArrayList<>();
 }
