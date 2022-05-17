@@ -20,11 +20,13 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
         return queryFactory
             .select(new QLocationPriceDto(
                 baseAddress.sidoName.as("name"),
-                houseInfo.avgPrice.avg().as("avgPrice")))
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat,
+                baseAddress.lng))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .groupBy(baseAddress.sidoName)
+            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
             .fetch();
     }
 
@@ -33,12 +35,14 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
         return queryFactory
             .select(new QLocationPriceDto(
                 baseAddress.gugunName.as("name"),
-                houseInfo.avgPrice.avg().as("avgPrice")))
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat,
+                baseAddress.lng))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .where(baseAddress.sidoName.eq(sidoName))
-            .groupBy(baseAddress.gugunName)
+            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
             .fetch();
     }
 
@@ -47,12 +51,14 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
         return queryFactory
             .select(new QLocationPriceDto(
                 baseAddress.dongName.as("name"),
-                houseInfo.avgPrice.avg().as("avgPrice")))
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat,
+                baseAddress.lng))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .where(baseAddress.gugunName.eq(gugunName))
-            .groupBy(baseAddress.dongName)
+            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
             .fetch();
     }
 }
