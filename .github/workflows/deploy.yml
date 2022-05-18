@@ -21,6 +21,13 @@ jobs:
         with:
           java-version: 11
 
+      - name: Set up MySQL
+        uses: samin/mysql-action@v1
+        with:
+          mysql database: ${{ secrets.TEST_DATABASE }}
+          mysql user: ${{ secrets.TEST_DATABASE_ID }}
+          mysql password: ${{ secrets.TEST_DATABASE_PASSWORD }}
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
         shell: bash
