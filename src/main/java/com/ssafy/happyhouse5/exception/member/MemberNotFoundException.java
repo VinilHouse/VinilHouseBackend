@@ -8,6 +8,6 @@ import com.ssafy.happyhouse5.exception.common.ApplicationException;
 public class MemberNotFoundException extends ApplicationException {
 
     public MemberNotFoundException() {
-        super(NOT_FOUND, MemberConst.MEMBER_NOT_FOUND);
+        super(NOT_FOUND, MemberConst.MEMBER_NOT_FOUND_MSG);
     }
 }
