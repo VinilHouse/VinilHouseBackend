@@ -1,12 +1,11 @@
 package com.ssafy.happyhouse5.service.impl;
 
-import static com.ssafy.happyhouse5.constant.BoardConst.WRITER_ONLY_MODIFY;
-
 import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
 import com.ssafy.happyhouse5.dto.board.BoardUpdateDto;
 import com.ssafy.happyhouse5.entity.Board;
 import com.ssafy.happyhouse5.entity.Member;
 import com.ssafy.happyhouse5.exception.board.BoardNotFoundException;
+import com.ssafy.happyhouse5.exception.member.MemberAuthException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.BoardRepository;
 import com.ssafy.happyhouse5.repository.MemberRepository;
@@ -46,7 +45,7 @@ public class BoardServiceImpl implements BoardService {
         Board board = checkExistAndGetBoard(boardId);
 
         if (!board.getMember().getId().equals(memberId)) {
-            throw new IllegalArgumentException(WRITER_ONLY_MODIFY);
+            throw new MemberAuthException();
         }
         board.setTitle(boardUpdateDto.getTitle());
         board.setContent(boardUpdateDto.getContent());
