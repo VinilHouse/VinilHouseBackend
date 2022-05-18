@@ -2,6 +2,7 @@ package com.ssafy.happyhouse5.controller.restcontroller;
 
 import static com.ssafy.happyhouse5.constant.BoardConst.*;
 import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_SESSION;
+import static com.ssafy.happyhouse5.dto.common.Response.*;
 
 import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
 import com.ssafy.happyhouse5.dto.board.BoardResponseDto;
@@ -46,7 +47,7 @@ public class BoardRestController {
         @SessionAttribute(MEMBER_SESSION) Long memberId) throws URISyntaxException {
         Long boardId = boardService.create(memberId, boardRegisterDto);
         return ResponseEntity.created(new URI("/api/boards/" + boardId))
-            .body(Response.success(null));
+            .body(success(null));
     }
 
     @PatchMapping("/{boardId}")
@@ -55,7 +56,7 @@ public class BoardRestController {
         @Validated @RequestBody BoardUpdateDto boardUpdateDto,
         @SessionAttribute(MEMBER_SESSION) Long memberId) {
         boardService.update(memberId, boardId, boardUpdateDto);
-        return ResponseEntity.ok().body(Response.success(boardId));
+        return ResponseEntity.ok().body(success(boardId));
     }
 
     @GetMapping("/{boardId}")
@@ -63,7 +64,7 @@ public class BoardRestController {
         Board board = boardService.selectById(boardId);
         BoardResponseDto dto = new BoardResponseDto
             (board.getId(), board.getTitle(), board.getContent(), board.getMember().getIdent());
-        return ResponseEntity.ok(Response.success(dto));
+        return ResponseEntity.ok(success(dto));
     }
 
     // TODO : require: class for response data (BoardResponse.java ... etc)
@@ -75,14 +76,14 @@ public class BoardRestController {
 
         if (map == null || map.size() == 0) {
             return ResponseEntity.ok(
-                Response.success(
+                success(
                     boardService.findAll().stream()
                         .map(BoardResponseDto::new)
                         .collect(Collectors.toList())));
         }
 
         if (map.size() != 1) {
-            return ResponseEntity.badRequest().body(Response.fail(INVALID_SIZE_OF_QUERY));
+            return ResponseEntity.badRequest().body(fail(INVALID_SIZE_OF_QUERY));
         }
 
         String queryKey = map.entrySet().stream()
@@ -92,10 +93,10 @@ public class BoardRestController {
 
         BoardSearchOption option = optionMapper.get(queryKey);
         if (option == null) {
-            return ResponseEntity.badRequest().body(Response.fail(NOT_ALLOWED_FIND_QUERY));
+            return ResponseEntity.badRequest().body(fail(NOT_ALLOWED_FIND_QUERY));
         }
 
-        return ResponseEntity.ok(Response.success(
+        return ResponseEntity.ok(success(
             boardService.findByOption(option, map.get(queryKey))
                 .stream().map(BoardResponseDto::new)
                 .collect(Collectors.toList())));
@@ -104,6 +105,6 @@ public class BoardRestController {
     @DeleteMapping("/{boardId}")
     public ResponseEntity<Response> delete(@PathVariable Long boardId) {
         boardService.delete(boardId);
-        return ResponseEntity.ok().body(Response.success(boardId));
+        return ResponseEntity.ok().body(success(boardId));
     }
 }
