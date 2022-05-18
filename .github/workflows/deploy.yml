@@ -5,8 +5,8 @@ on:
 
 name: Deploy String boot to Amazon EC2
 env:
-  PROJECT_NAME: action_codedeploy
-
+  PROJECT_NAME: vinil_project
+  
 jobs:
   deploy:
     name: DEPLOY
@@ -28,3 +28,20 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build -x test 
         shell: bash
+
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: $
+          aws-secret-access-key: $
+          aws-region: $
+
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-3 ./$GITHUB_SHA.zip s3://vinil-deploy/$PROJECT_NAME/$GITHUB_SHA.zip
+
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name vinil-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name vinil-group --s3-location bucket=vinil-deploy,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
