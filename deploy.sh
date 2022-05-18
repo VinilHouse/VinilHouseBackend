@@ -19,4 +19,4 @@ else
 fi
 
 echo "> $JAR_PATH 배포"
-nohup java -jar --spring.config.location=/home/ubuntu/application.yml $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar $JAR_PATH --spring.config.location=/home/ubuntu/application.yml > /dev/null 2> /dev/null < /dev/null &
