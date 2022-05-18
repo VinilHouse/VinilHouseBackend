@@ -41,7 +41,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
-        run: aws s3 cp --region ap-northeast-3 ./$GITHUB_SHA.zip s3://vinil-deploy/$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws s3 cp --region ap-northeast-3 ./$GITHUB_SHA.zip s3://bucket-for-vinil/$PROJECT_NAME/$GITHUB_SHA.zip
 
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name vinil-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name vinil-group --s3-location bucket=vinil-deploy,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
+        run: aws deploy create-deployment --application-name vinil-app --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name vinil-group --s3-location bucket=bucket-for-vinil,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
