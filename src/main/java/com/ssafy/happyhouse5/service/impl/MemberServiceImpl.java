@@ -1,11 +1,9 @@
 package com.ssafy.happyhouse5.service.impl;
 
-import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_LOGIN_FAIL_MSG;
-import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_NOT_FOUND;
-
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.Optional;
@@ -34,14 +32,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public boolean login(String ident, String password) {
-        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident),
-            MEMBER_LOGIN_FAIL_MSG).getPassword().equals(password);
+        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident)
+        ).getPassword().equals(password);
     }
 
     @Override
     @Transactional
     public void update(Long id, MemberUpdateDto memberUpdateDto) {
-        Member member = checkExistAndGetMember(memberRepository.findById(id), MEMBER_NOT_FOUND);
+        Member member = checkExistAndGetMember(memberRepository.findById(id));
         member.setPassword(memberUpdateDto.getPassword());
         member.setEmail(memberUpdateDto.getEmail());
     }
@@ -54,21 +52,20 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member findMemberById(Long id) {
-        return checkExistAndGetMember(memberRepository.findById(id), MEMBER_NOT_FOUND);
+        return checkExistAndGetMember(memberRepository.findById(id));
     }
 
     @Override
     public Member findMemberByIdent(String ident) {
-        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident), MEMBER_NOT_FOUND);
+        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident));
     }
 
     @Override
     public Member findMemberByEmail(String email) {
-        return checkExistAndGetMember(memberRepository.findMemberByEmail(email), MEMBER_NOT_FOUND);
+        return checkExistAndGetMember(memberRepository.findMemberByEmail(email));
     }
 
-    private Member checkExistAndGetMember(Optional<Member> memberRepository, String msg) {
-        return memberRepository.orElseThrow(
-            () -> new IllegalArgumentException(msg));
+    private Member checkExistAndGetMember(Optional<Member> memberRepository) {
+        return memberRepository.orElseThrow(MemberNotFoundException::new);
     }
 }

@@ -10,6 +10,9 @@ import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberResponseDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.common.BadParamException;
+import com.ssafy.happyhouse5.exception.member.MemberAuthException;
+import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.net.URI;
 import javax.servlet.http.HttpSession;
@@ -58,7 +61,7 @@ public class MemberRestController {
         checkHasBindingError(bindingResult);
 
         if (!memberService.login(memberLoginDto.getIdent(), memberLoginDto.getPassword())) {
-            return ResponseEntity.status(UNAUTHORIZED).body(success(MEMBER_LOGIN_FAIL_MSG));
+            throw new MemberAuthException();
         }
 
         Member member = memberService.findMemberByIdent(memberLoginDto.getIdent());
@@ -69,7 +72,7 @@ public class MemberRestController {
     @PostMapping("/logout")
     public ResponseEntity<Response> logout(HttpSession session) {
         if (session.isNew() || session.getAttribute(MEMBER_SESSION) == null) {
-            return ResponseEntity.status(UNAUTHORIZED).body(success(MEMBER_LOGOUT_FAIL_MSG));
+            throw new MemberAuthException();
         }
         session.invalidate();
         return ResponseEntity.ok().body(success());
@@ -79,7 +82,6 @@ public class MemberRestController {
     public ResponseEntity<Response> update(
         @SessionAttribute(MEMBER_SESSION) Long memberId,
         @RequestBody MemberUpdateDto memberUpdateDto) {
-
         memberService.update(memberId, memberUpdateDto);
         return ResponseEntity.accepted().build();
     }
@@ -103,7 +105,7 @@ public class MemberRestController {
     public ResponseEntity<Response> findByIdent(@RequestParam(required = false) String ident) {
         Member findMember = memberService.findMemberByIdent(ident);
         if (findMember == null) {
-            return new ResponseEntity<>(fail(), NOT_FOUND);
+            throw new MemberNotFoundException();
         }
         return ResponseEntity.ok(
             success(new ResponseEntity<>(new MemberResponseDto(findMember), OK)));
@@ -113,14 +115,14 @@ public class MemberRestController {
     public ResponseEntity<Response> findByEmail(@RequestParam(required = false) String email) {
         Member findMember = memberService.findMemberByEmail(email);
         if (findMember == null) {
-            return new ResponseEntity<>(fail(), NOT_FOUND);
+            throw new MemberNotFoundException();
         }
         return ResponseEntity.ok(success(new MemberResponseDto(findMember)));
     }
 
     private void checkHasBindingError(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            throw new RuntimeException(MEMBER_BINDING_ERROR);
+            throw new BadParamException();
         }
     }
 }

@@ -9,6 +9,7 @@ import com.ssafy.happyhouse5.dto.board.BoardResponseDto;
 import com.ssafy.happyhouse5.dto.board.BoardUpdateDto;
 import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.entity.Board;
+import com.ssafy.happyhouse5.exception.common.BadParamException;
 import com.ssafy.happyhouse5.service.BoardService;
 import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import io.swagger.annotations.ApiOperation;
@@ -67,7 +68,6 @@ public class BoardRestController {
         return ResponseEntity.ok(success(dto));
     }
 
-    // TODO : require: class for response data (BoardResponse.java ... etc)
     // TODO : require: interceptor for processing auth (and session attr)
     @GetMapping
     @ApiOperation(value = "게시글 조회", notes = "title, content, member 값을 쿼리로 주어 조회할 수 있다. 쿼리의 개수는 0개 또는 1개여야 한다.")
@@ -83,7 +83,7 @@ public class BoardRestController {
         }
 
         if (map.size() != 1) {
-            return ResponseEntity.badRequest().body(fail(INVALID_SIZE_OF_QUERY));
+            throw new BadParamException();
         }
 
         String queryKey = map.entrySet().stream()
@@ -93,7 +93,7 @@ public class BoardRestController {
 
         BoardSearchOption option = optionMapper.get(queryKey);
         if (option == null) {
-            return ResponseEntity.badRequest().body(fail(NOT_ALLOWED_FIND_QUERY));
+            throw new BadParamException();
         }
 
         return ResponseEntity.ok(success(
