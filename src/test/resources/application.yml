@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/testdb?serverTimezone=UTC
+    username: testuser
+    password: testpassword
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+logging:
+  level:
+    com.ssafy.happyhouse5: debug
+    org.hibernate.SQL: debug
