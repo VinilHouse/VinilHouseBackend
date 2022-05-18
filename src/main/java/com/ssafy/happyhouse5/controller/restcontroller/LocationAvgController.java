@@ -1,5 +1,8 @@
 package com.ssafy.happyhouse5.controller.restcontroller;
 
+import static com.ssafy.happyhouse5.dto.common.Response.*;
+
+import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.dto.locationavg.LocationLevel;
 import com.ssafy.happyhouse5.dto.locationavg.LocationPriceDto;
 import com.ssafy.happyhouse5.service.LocationService;
@@ -22,7 +25,7 @@ public class LocationAvgController {
     private final LocationService locationService;
 
     @GetMapping
-    public ResponseEntity<List<LocationPriceDto>> getLocationAndAvgPrice(
+    public ResponseEntity<Response> getLocationAndAvgPrice(
         @RequestParam LocationLevel level,
         @RequestParam(required = false) String query) {
 
@@ -30,6 +33,6 @@ public class LocationAvgController {
         if(level != LocationLevel.SIDO && !StringUtils.hasText(query)){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(locationService.getLocationPrice(level, query));
+        return ResponseEntity.ok(success(locationService.getLocationPrice(level, query)));
     }
 }
