@@ -6,11 +6,13 @@ import static com.ssafy.happyhouse5.constant.MemberConst.MEMBER_SESSION;
 import com.ssafy.happyhouse5.dto.board.BoardRegisterDto;
 import com.ssafy.happyhouse5.dto.board.BoardResponseDto;
 import com.ssafy.happyhouse5.dto.board.BoardUpdateDto;
+import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.entity.Board;
 import com.ssafy.happyhouse5.service.BoardService;
 import com.ssafy.happyhouse5.service.impl.BoardSearchOption;
 import io.swagger.annotations.ApiOperation;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -39,44 +41,48 @@ public class BoardRestController {
     private final OptionMapper optionMapper;
 
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Response> create(
         @Validated @RequestBody BoardRegisterDto boardRegisterDto,
-        @SessionAttribute(MEMBER_SESSION) Long memberId) {
+        @SessionAttribute(MEMBER_SESSION) Long memberId) throws URISyntaxException {
         Long boardId = boardService.create(memberId, boardRegisterDto);
-        return ResponseEntity.created(URI.create("/api/boards/" + boardId)).build();
+        return ResponseEntity.created(new URI("/api/boards/" + boardId))
+            .body(Response.success(null));
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Void> update(
+    public ResponseEntity<Response> update(
         @PathVariable Long boardId,
         @Validated @RequestBody BoardUpdateDto boardUpdateDto,
         @SessionAttribute(MEMBER_SESSION) Long memberId) {
         boardService.update(memberId, boardId, boardUpdateDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(Response.success(boardId));
     }
 
     @GetMapping("/{boardId}")
-    public ResponseEntity<BoardResponseDto> detail(@PathVariable Long boardId) {
+    public ResponseEntity<Response> detail(@PathVariable Long boardId) {
         Board board = boardService.selectById(boardId);
-        return ResponseEntity.ok(new BoardResponseDto
-            (board.getId(), board.getTitle(), board.getContent(), board.getMember().getIdent()));
+        BoardResponseDto dto = new BoardResponseDto
+            (board.getId(), board.getTitle(), board.getContent(), board.getMember().getIdent());
+        return ResponseEntity.ok(Response.success(dto));
     }
 
     // TODO : require: class for response data (BoardResponse.java ... etc)
     // TODO : require: interceptor for processing auth (and session attr)
     @GetMapping
     @ApiOperation(value = "게시글 조회", notes = "title, content, member 값을 쿼리로 주어 조회할 수 있다. 쿼리의 개수는 0개 또는 1개여야 한다.")
-    public ResponseEntity<?> find(
+    public ResponseEntity<Response> find(
         @RequestParam Map<String, String> map) {
 
         if (map == null || map.size() == 0) {
-            return ResponseEntity.ok(boardService.findAll().stream()
-                .map(BoardResponseDto::new)
-                .collect(Collectors.toList()));
+            return ResponseEntity.ok(
+                Response.success(
+                    boardService.findAll().stream()
+                        .map(BoardResponseDto::new)
+                        .collect(Collectors.toList())));
         }
 
         if (map.size() != 1) {
-            return ResponseEntity.badRequest().body(INVALID_SIZE_OF_QUERY);
+            return ResponseEntity.badRequest().body(Response.fail(INVALID_SIZE_OF_QUERY));
         }
 
         String queryKey = map.entrySet().stream()
@@ -86,17 +92,18 @@ public class BoardRestController {
 
         BoardSearchOption option = optionMapper.get(queryKey);
         if (option == null) {
-            return ResponseEntity.badRequest().body(NOT_ALLOWED_FIND_QUERY);
+            return ResponseEntity.badRequest().body(Response.fail(NOT_ALLOWED_FIND_QUERY));
         }
 
-        return ResponseEntity.ok(boardService.findByOption(option, map.get(queryKey))
-            .stream().map(BoardResponseDto::new)
-            .collect(Collectors.toList()));
+        return ResponseEntity.ok(Response.success(
+            boardService.findByOption(option, map.get(queryKey))
+                .stream().map(BoardResponseDto::new)
+                .collect(Collectors.toList())));
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> delete(@PathVariable Long boardId) {
+    public ResponseEntity<Response> delete(@PathVariable Long boardId) {
         boardService.delete(boardId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(Response.success(boardId));
     }
 }
