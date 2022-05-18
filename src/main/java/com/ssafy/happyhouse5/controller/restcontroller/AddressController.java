@@ -1,6 +1,9 @@
 package com.ssafy.happyhouse5.controller.restcontroller;
 
+import static com.ssafy.happyhouse5.dto.common.Response.*;
+
 import com.ssafy.happyhouse5.dto.baseaddress.BaseAddressDto;
+import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.service.AddressService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +21,7 @@ public class AddressController {
     private final AddressService addressService;
 
     @GetMapping
-    public ResponseEntity<List<BaseAddressDto>> getAllAddresses(){
+    public ResponseEntity<Response> getAllAddresses(){
         List<BaseAddressDto> dtoList = addressService.getAllAddresses().stream()
             .map(BaseAddressDto::new)
             .collect(Collectors.toList());
@@ -26,6 +29,6 @@ public class AddressController {
         if(dtoList.size() == 0){
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(dtoList);
+        return ResponseEntity.ok(success(dtoList));
     }
 }
