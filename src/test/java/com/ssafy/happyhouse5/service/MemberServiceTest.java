@@ -7,6 +7,9 @@ import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
+import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
+import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,5 +125,57 @@ class MemberServiceTest {
         assertThat(favorite).isNotNull();
         assertThat(favorite.getMember()).isEqualTo(member);
         assertThat(favorite.getHouseInfo()).isEqualTo(houseInfo);
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 등록 해제 테스트")
+    void disableFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        Long favoriteId = memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        Long disabledId = memberService.disableFavorite(member.getId(), houseInfo.getAptCode());
+
+        assertThat(favoriteId).isNotNull();
+        assertThat(disabledId).isNotNull();
+        assertThat(favoriteId).isEqualTo(disabledId);
+        assertThat(em.createQuery("select f from Favorite f").getResultList().size())
+            .isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("없는 아파트 등록 즐겨찾기 예외 테스트")
+    void notExistHouseInfoFavoriteTest() {
+        Member member = new Member("member1");
+        em.persist(member);
+
+        assertThrows(HouseInfoNotFoundException.class,
+            () -> memberService.enableFavorite(member.getId(), 999L));
+    }
+
+    @Test
+    @DisplayName("없는 멤버가 즐겨찾기 등록하는 예외 테스트")
+    void notExistMemberFavoriteTest() {
+        HouseInfo houseInfo = new HouseInfo("apt1");
+        em.persist(houseInfo);
+
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.enableFavorite(999L, houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 즐겨찾기 해제하는 경우 예외 테스트")
+    void notExistFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        assertThrows(FavoriteNotFoundException.class,
+            () -> memberService.disableFavorite(member.getId(), houseInfo.getAptCode()));
     }
 }
