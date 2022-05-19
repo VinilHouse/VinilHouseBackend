@@ -36,9 +36,9 @@ public class HouseInfo {
 
     private String jibun;
 
-    private String lat;
+    private Double lat;
 
-    private String lng;
+    private Double lng;
 
     private String img;
 
