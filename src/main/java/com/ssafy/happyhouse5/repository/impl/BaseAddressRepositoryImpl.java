@@ -3,8 +3,11 @@ package com.ssafy.happyhouse5.repository.impl;
 import static com.ssafy.happyhouse5.entity.QBaseAddress.baseAddress;
 import static com.ssafy.happyhouse5.entity.QHouseInfo.houseInfo;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.happyhouse5.dto.locationavg.LocationPriceDto;
+import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.dto.locationavg.QLocationPriceDto;
 import com.ssafy.happyhouse5.repository.BaseAddressCustom;
 import java.util.List;
@@ -60,5 +63,57 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .where(baseAddress.gugunName.eq(gugunName))
             .groupBy(baseAddress.dongName)
             .fetch();
+    }
+
+    @Override
+    public List<LocationPriceDto> findAllBySidoInRange(LocationRange range) {
+        return queryFactory
+            .select(new QLocationPriceDto(
+                baseAddress.sidoName.as("name"),
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
+            .from(baseAddress)
+            .leftJoin(
+                baseAddress.houseInfos, houseInfo)
+            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .groupBy(baseAddress.sidoName)
+            .fetch();
+    }
+
+    @Override
+    public List<LocationPriceDto> findAllByGugunInRange(LocationRange range) {
+        return queryFactory
+            .select(new QLocationPriceDto(
+                baseAddress.gugunName.as("name"),
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
+            .from(baseAddress)
+            .leftJoin(
+                baseAddress.houseInfos, houseInfo)
+            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .groupBy(baseAddress.gugunName)
+            .fetch();    }
+
+    @Override
+    public List<LocationPriceDto> findAllByDongInRange(LocationRange range) {
+        return queryFactory
+            .select(new QLocationPriceDto(
+                baseAddress.dongName.as("name"),
+                houseInfo.avgPrice.avg().as("avgPrice"),
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
+            .from(baseAddress)
+            .leftJoin(
+                baseAddress.houseInfos, houseInfo)
+            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .groupBy(baseAddress.dongName)
+            .fetch();    }
+
+    private BooleanExpression betweenLatLng(
+        NumberExpression<Double> lat, NumberExpression<Double> lng, LocationRange range) {
+        return lat.between(range.getBeginLat(), range.getEndLat())
+            .and(lng.between(range.getBeginLng(), range.getEndLng()));
     }
 }
