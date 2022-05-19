@@ -52,4 +52,7 @@ public class HouseInfo {
 
     private Double avgPrice;
 
+    public HouseInfo(String aptName) {
+        this.aptName = aptName;
+    }
 }

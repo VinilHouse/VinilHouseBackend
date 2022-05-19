@@ -2,10 +2,12 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -70,12 +72,17 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void enableFavorite(Long memberId, Long aptCode) {
-
+    public Long enableFavorite(Long memberId, Long aptCode) {
+        return 0L;
     }
 
     @Override
-    public void disableFavorite(Long memberId, Long aptCode) {
+    public Long disableFavorite(Long memberId, Long aptCode) {
+        return 0L;
+    }
 
+    @Override
+    public List<HouseInfo> getFavoriteHouseInfo(Long memberId) {
+        return null;
     }
 }

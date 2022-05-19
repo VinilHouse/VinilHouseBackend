@@ -1,13 +1,14 @@
 package com.ssafy.happyhouse5.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Favorite;
+import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -105,5 +106,21 @@ class MemberServiceTest {
         assertThat(memberService.findMemberByEmail(MEMBER_EMAIL)).isNotNull();
         assertThrows(RuntimeException.class,
             () -> memberService.findMemberByEmail(MEMBER_EMAIL + GARBAGE_VALUE));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 등록 테스트")
+    void createFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        Long favoriteId = memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        Favorite favorite = em.find(Favorite.class, favoriteId);
+        assertThat(favorite).isNotNull();
+        assertThat(favorite.getMember()).isEqualTo(member);
+        assertThat(favorite.getHouseInfo()).isEqualTo(houseInfo);
     }
 }

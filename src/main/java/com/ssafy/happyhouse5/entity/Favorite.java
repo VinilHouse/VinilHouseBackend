@@ -29,4 +29,9 @@ public class Favorite {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apt_code")
     private HouseInfo houseInfo;
+
+    public Favorite(Member member, HouseInfo houseInfo) {
+        this.member = member;
+        this.houseInfo = houseInfo;
+    }
 }
