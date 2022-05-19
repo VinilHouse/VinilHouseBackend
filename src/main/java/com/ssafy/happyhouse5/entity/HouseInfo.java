@@ -32,6 +32,14 @@ public class HouseInfo {
     @JoinColumn(name = "dong_name")
     private BaseAddress baseAddress;
 
+    @BatchSize(size = 200)
+    @OneToMany(mappedBy = "id")
+    @OrderBy("dealYear desc, dealMonth desc, dealDay desc")
+    private final List<HouseDeal> houseDeals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "houseInfo")
+    private final List<Favorite> favorites = new ArrayList<>();
+
     private String buildYear;
 
     private String jibun;
@@ -44,8 +52,4 @@ public class HouseInfo {
 
     private Double avgPrice;
 
-    @BatchSize(size = 200)
-    @OneToMany(mappedBy = "id")
-    @OrderBy("dealYear desc, dealMonth desc, dealDay desc")
-    List<HouseDeal> houseDeals = new ArrayList<>();
 }

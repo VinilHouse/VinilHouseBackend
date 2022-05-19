@@ -35,4 +35,7 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private final List<Board> boards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member")
+    private final List<Favorite> favorites = new ArrayList<>();
 }
