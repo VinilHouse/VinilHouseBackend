@@ -62,4 +62,11 @@ public class HouseRestController {
                 .toList())
         );
     }
+
+    @GetMapping("/rank")
+    public ResponseEntity<Response> getTopFavoriteRankHouseInfos() {
+        return ResponseEntity.ok(success(
+            houseService.findFavoriteRankHouseInfo(PageRequest.of(0, 10)))
+        );
+    }
 }
