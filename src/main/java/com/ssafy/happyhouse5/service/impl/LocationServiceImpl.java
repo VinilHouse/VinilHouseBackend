@@ -2,6 +2,7 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.locationavg.LocationLevel;
 import com.ssafy.happyhouse5.dto.locationavg.LocationPriceDto;
+import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.repository.BaseAddressRepository;
 import com.ssafy.happyhouse5.service.LocationService;
 import java.util.List;
@@ -26,6 +27,19 @@ public class LocationServiceImpl implements LocationService {
             case DONG:
                 return baseAddressRepository.findByDongRange(query);
         }
-        throw new RuntimeException("서버 내부 오류가 발생했습니다.");
+        throw new RuntimeException();
+    }
+
+    @Override
+    public List<LocationPriceDto> getLocationPrice(LocationLevel level, LocationRange range) {
+        switch (level){
+            case SIDO:
+                return baseAddressRepository.findAllBySidoInRange(range);
+            case GUGUN:
+                return baseAddressRepository.findAllByGugunInRange(range);
+            case DONG:
+                return baseAddressRepository.findAllByDongInRange(range);
+        }
+        throw new RuntimeException();
     }
 }
