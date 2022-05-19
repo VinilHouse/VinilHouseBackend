@@ -116,10 +116,9 @@ class MemberServiceTest {
     @Test
     @DisplayName("즐겨찾기 등록 테스트")
     void createFavoriteTest() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         HouseInfo houseInfo = new HouseInfo("apt1");
 
-        em.persist(member);
         em.persist(houseInfo);
 
         Long favoriteId = memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
@@ -132,7 +131,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("즐겨찾기 등록 해제 테스트")
     void disableFavoriteTest() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         HouseInfo houseInfo = new HouseInfo("apt1");
 
         em.persist(member);
@@ -151,7 +150,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("없는 아파트 등록 즐겨찾기 예외 테스트")
     void notExistHouseInfoFavoriteTest() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         em.persist(member);
 
         assertThrows(HouseInfoNotFoundException.class,
@@ -171,7 +170,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("존재하지 않는 즐겨찾기 해제하는 경우 예외 테스트")
     void notExistFavoriteTest() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         HouseInfo houseInfo = new HouseInfo("apt1");
 
         em.persist(member);
@@ -184,7 +183,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("즐겨찾기 중복 등록 테스트")
     void duplicateFavoriteTest() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         HouseInfo houseInfo = new HouseInfo("apt1");
 
         em.persist(member);
@@ -198,7 +197,7 @@ class MemberServiceTest {
     @Test
     @DisplayName("즐겨찾기로 등록된 HouseInfo 조회 테스트")
     void findHouseInfoByMember() {
-        Member member = new Member("member1");
+        Member member = memberService.findMemberByIdent(MEMBER_ID);
         HouseInfo houseInfo1 = new HouseInfo("apt1");
         HouseInfo houseInfo2 = new HouseInfo("apt2");
 
