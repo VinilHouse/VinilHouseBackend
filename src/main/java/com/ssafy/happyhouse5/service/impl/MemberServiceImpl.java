@@ -68,4 +68,14 @@ public class MemberServiceImpl implements MemberService {
     private Member checkExistAndGetMember(Optional<Member> memberRepository) {
         return memberRepository.orElseThrow(MemberNotFoundException::new);
     }
+
+    @Override
+    public void enableFavorite(Long memberId, Long aptCode) {
+
+    }
+
+    @Override
+    public void disableFavorite(Long memberId, Long aptCode) {
+
+    }
 }

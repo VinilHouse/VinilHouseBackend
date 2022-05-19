@@ -20,4 +20,8 @@ public interface MemberService {
     Member findMemberByIdent(String ident);
 
     Member findMemberByEmail(String email);
+
+    void enableFavorite(Long memberId, Long aptCode);
+
+    void disableFavorite(Long memberId, Long aptCode);
 }
