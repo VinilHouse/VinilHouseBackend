@@ -1,5 +1,6 @@
 package com.ssafy.happyhouse5.service.impl;
 
+import com.ssafy.happyhouse5.dto.house.HouseInfoWithRankDto;
 import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseDeal;
 import com.ssafy.happyhouse5.entity.HouseInfo;
@@ -40,5 +41,10 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public List<HouseInfo> findHouseInfoInRange(LocationRange range) {
         return houseInfoRepository.findHouseInfoInRange(range);
+    }
+
+    @Override
+    public List<HouseInfoWithRankDto> findFavoriteRankHouseInfo(Pageable pageable) {
+        return houseInfoRepository.findRankByFavorite(pageable);
     }
 }
