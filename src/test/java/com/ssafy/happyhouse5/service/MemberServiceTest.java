@@ -11,6 +11,7 @@ import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -192,5 +193,23 @@ class MemberServiceTest {
         memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
         assertThrows(FavoriteDuplicateException.class,
             () -> memberService.enableFavorite(member.getId(), houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기로 등록된 HouseInfo 조회 테스트")
+    void findHouseInfoByMember() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo1 = new HouseInfo("apt1");
+        HouseInfo houseInfo2 = new HouseInfo("apt2");
+
+        em.persist(member);
+        em.persist(houseInfo1);
+        em.persist(houseInfo2);
+
+        memberService.enableFavorite(member.getId(), houseInfo1.getAptCode());
+        memberService.enableFavorite(member.getId(), houseInfo2.getAptCode());
+
+        List<HouseInfo> favoriteHouseInfos = memberService.getFavoriteHouseInfo(member.getId());
+        assertThat(favoriteHouseInfos).contains(houseInfo1, houseInfo2);
     }
 }
