@@ -5,6 +5,7 @@ import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
@@ -80,6 +81,10 @@ public class MemberServiceImpl implements MemberService {
     public Long enableFavorite(Long memberId, Long aptCode) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
         HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+        if(favoriteRepository.findByMemberAndHouseInfo(member, houseInfo)
+            .isPresent()){
+            throw new FavoriteDuplicateException();
+        }
 
         return favoriteRepository.save(new Favorite(member, houseInfo)).getId();
     }
