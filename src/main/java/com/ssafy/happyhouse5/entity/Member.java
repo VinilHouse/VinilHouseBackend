@@ -14,6 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -36,6 +37,7 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Board> boards = new ArrayList<>();
 
+    @BatchSize(size = 30)
     @OneToMany(mappedBy = "member")
     private final List<Favorite> favorites = new ArrayList<>();
 

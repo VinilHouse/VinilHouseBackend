@@ -15,6 +15,7 @@ import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,7 +87,10 @@ public class MemberServiceImpl implements MemberService {
             throw new FavoriteDuplicateException();
         }
 
-        return favoriteRepository.save(new Favorite(member, houseInfo)).getId();
+        Favorite favorite = new Favorite();
+        favorite.setMember(member);
+        favorite.setHouseInfo(houseInfo);
+        return favoriteRepository.save(favorite).getId();
     }
 
     @Override
@@ -101,7 +105,10 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<HouseInfo> getFavoriteHouseInfo(Long memberId) {
-        return null;
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        return favoriteRepository.findFavoriteByMemberWithHouseInfo(member).stream()
+            .map(Favorite::getHouseInfo)
+            .collect(Collectors.toList());
     }
 
     private Member checkExistAndGetMember(Optional<Member> optional) {
