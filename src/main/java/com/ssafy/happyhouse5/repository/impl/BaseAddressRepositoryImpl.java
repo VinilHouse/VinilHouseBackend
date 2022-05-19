@@ -26,7 +26,7 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
+            .groupBy(baseAddress.sidoName, baseAddress.lat, baseAddress.lng)
             .fetch();
     }
 
@@ -58,7 +58,7 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .where(baseAddress.gugunName.eq(gugunName))
-            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
+            .groupBy(baseAddress.dongName, baseAddress.lat, baseAddress.lng)
             .fetch();
     }
 }
