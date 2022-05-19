@@ -7,6 +7,7 @@ import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
@@ -58,12 +59,12 @@ class MemberServiceTest {
     void login() {
         assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD))
             .isEqualTo(true);
-//        assertThat(memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD + GARBAGE_VALUE))
-//            .isEqualTo(false);
-//        assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD + GARBAGE_VALUE))
-//            .isEqualTo(false);
-//        assertThat(memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD))
-//            .isEqualTo(false);
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD + GARBAGE_VALUE));
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD));
+        assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD + GARBAGE_VALUE))
+            .isEqualTo(false);
     }
 
     @Test
@@ -177,5 +178,19 @@ class MemberServiceTest {
 
         assertThrows(FavoriteNotFoundException.class,
             () -> memberService.disableFavorite(member.getId(), houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 중복 등록 테스트")
+    void duplicateFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        assertThrows(FavoriteDuplicateException.class,
+            () -> memberService.enableFavorite(member.getId(), houseInfo.getAptCode()));
     }
 }
