@@ -1,5 +1,6 @@
 package com.ssafy.happyhouse5.service.impl;
 
+import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseDeal;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.repository.HouseDealRepository;
@@ -34,5 +35,10 @@ public class HouseServiceImpl implements HouseService {
     @Override
     public Page<HouseInfo> findHouseInfoByPrefix(String prefix, Pageable pageable) {
         return houseInfoRepository.findHouseInfoByAptPrefix(prefix, pageable);
+    }
+
+    @Override
+    public List<HouseInfo> findHouseInfoInRange(LocationRange range) {
+        return houseInfoRepository.findHouseInfoInRange(range);
     }
 }
