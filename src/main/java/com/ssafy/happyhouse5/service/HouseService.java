@@ -1,6 +1,7 @@
 package com.ssafy.happyhouse5.service;
 
 
+import com.ssafy.happyhouse5.dto.house.HouseInfoWithRankDto;
 import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseDeal;
 import com.ssafy.happyhouse5.entity.HouseInfo;
@@ -17,4 +18,6 @@ public interface HouseService {
     Page<HouseInfo> findHouseInfoByPrefix(String prefix, Pageable pageable);
 
     List<HouseInfo> findHouseInfoInRange(LocationRange range);
+
+    List<HouseInfoWithRankDto> findFavoriteRankHouseInfo(Pageable pageable);
 }

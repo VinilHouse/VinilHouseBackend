@@ -55,4 +55,9 @@ public class HouseInfo {
     public HouseInfo(String aptName) {
         this.aptName = aptName;
     }
+
+    public HouseInfo(String aptName, BaseAddress baseAddress) {
+        this.aptName = aptName;
+        this.baseAddress = baseAddress;
+    }
 }
