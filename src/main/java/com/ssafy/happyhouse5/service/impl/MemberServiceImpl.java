@@ -2,9 +2,14 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
+import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
+import com.ssafy.happyhouse5.repository.FavoriteRepository;
+import com.ssafy.happyhouse5.repository.HouseInfoRepository;
 import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.List;
@@ -19,6 +24,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
+
+    private final FavoriteRepository favoriteRepository;
+
+    private final HouseInfoRepository houseInfoRepository;
 
     @Override
     @Transactional
@@ -67,22 +76,35 @@ public class MemberServiceImpl implements MemberService {
         return checkExistAndGetMember(memberRepository.findMemberByEmail(email));
     }
 
-    private Member checkExistAndGetMember(Optional<Member> memberRepository) {
-        return memberRepository.orElseThrow(MemberNotFoundException::new);
-    }
-
     @Override
     public Long enableFavorite(Long memberId, Long aptCode) {
-        return 0L;
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+
+        return favoriteRepository.save(new Favorite(member, houseInfo)).getId();
     }
 
     @Override
     public Long disableFavorite(Long memberId, Long aptCode) {
-        return 0L;
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+        Favorite favorite = favoriteRepository.findByMemberAndHouseInfo(member, houseInfo)
+            .orElseThrow(FavoriteNotFoundException::new);
+        favoriteRepository.delete(favorite);
+        return favorite.getId();
     }
 
     @Override
     public List<HouseInfo> getFavoriteHouseInfo(Long memberId) {
         return null;
+    }
+
+    private Member checkExistAndGetMember(Optional<Member> optional) {
+        return optional.orElseThrow(MemberNotFoundException::new);
+    }
+
+    private HouseInfo checkExistAndGetHouseInfoByAptCode(Long aptCode) {
+        return houseInfoRepository.findById(aptCode)
+            .orElseThrow(HouseInfoNotFoundException::new);
     }
 }
