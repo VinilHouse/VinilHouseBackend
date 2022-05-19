@@ -79,6 +79,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Long enableFavorite(Long memberId, Long aptCode) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
         HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
@@ -94,6 +95,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Long disableFavorite(Long memberId, Long aptCode) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
         HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
