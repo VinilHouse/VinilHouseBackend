@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface HouseInfoRepository extends JpaRepository<HouseInfo, Long> {
+public interface HouseInfoRepository extends JpaRepository<HouseInfo, Long>, HouseInfoCustom {
 
     @Query("select i from HouseInfo i join fetch i.baseAddress b where b.dongName = :dongName")
     List<HouseInfo> findHouseInfoBydongName(@Param("dongName") String dongName);
