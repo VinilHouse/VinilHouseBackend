@@ -21,12 +21,12 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .select(new QLocationPriceDto(
                 baseAddress.sidoName.as("name"),
                 houseInfo.avgPrice.avg().as("avgPrice"),
-                baseAddress.lat,
-                baseAddress.lng))
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .groupBy(baseAddress.sidoName, baseAddress.lat, baseAddress.lng)
+            .groupBy(baseAddress.sidoName)
             .fetch();
     }
 
@@ -36,13 +36,13 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .select(new QLocationPriceDto(
                 baseAddress.gugunName.as("name"),
                 houseInfo.avgPrice.avg().as("avgPrice"),
-                baseAddress.lat,
-                baseAddress.lng))
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .where(baseAddress.sidoName.eq(sidoName))
-            .groupBy(baseAddress.gugunName, baseAddress.lat, baseAddress.lng)
+            .groupBy(baseAddress.gugunName)
             .fetch();
     }
 
@@ -52,13 +52,13 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .select(new QLocationPriceDto(
                 baseAddress.dongName.as("name"),
                 houseInfo.avgPrice.avg().as("avgPrice"),
-                baseAddress.lat,
-                baseAddress.lng))
+                baseAddress.lat.avg(),
+                baseAddress.lng.avg()))
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .where(baseAddress.gugunName.eq(gugunName))
-            .groupBy(baseAddress.dongName, baseAddress.lat, baseAddress.lng)
+            .groupBy(baseAddress.dongName)
             .fetch();
     }
 }

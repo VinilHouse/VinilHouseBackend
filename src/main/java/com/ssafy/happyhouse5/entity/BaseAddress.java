@@ -24,9 +24,9 @@ public class BaseAddress {
 
     private String gugunName;
 
-    private String lat;
+    private Double lat;
 
-    private String lng;
+    private Double lng;
 
     @OneToMany(mappedBy = "baseAddress")
     private List<HouseInfo> houseInfos;

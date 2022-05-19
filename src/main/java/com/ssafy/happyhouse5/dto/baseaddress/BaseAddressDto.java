@@ -15,8 +15,8 @@ public class BaseAddressDto {
     private String sidoName;
     private String gugunName;
     private String dongName;
-    private String lat;
-    private String lng;
+    private Double lat;
+    private Double lng;
 
     public BaseAddressDto(BaseAddress baseAddress) {
         this.sidoName = baseAddress.getSidoName();
