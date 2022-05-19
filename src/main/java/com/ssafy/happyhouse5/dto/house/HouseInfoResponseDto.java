@@ -4,6 +4,7 @@ import com.ssafy.happyhouse5.entity.HouseInfo;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.util.StringUtils;
 
 @Getter
 @Setter
@@ -24,7 +25,9 @@ public class HouseInfoResponseDto {
         this.aptCode = houseInfo.getAptCode();
         this.aptName = houseInfo.getAptName();
         this.dongName = houseInfo.getBaseAddress().getDongName();
-        this.buildYear = Integer.parseInt(houseInfo.getBuildYear());
+        if (StringUtils.hasText(houseInfo.getBuildYear())) {
+            this.buildYear = Integer.parseInt(houseInfo.getBuildYear());
+        }
         this.jibun = houseInfo.getJibun();
         this.lat = houseInfo.getLat();
         this.lng = houseInfo.getLng();

@@ -9,13 +9,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = PROTECTED)
 public class Favorite {
 
     @Id @GeneratedValue
@@ -29,4 +26,14 @@ public class Favorite {
     @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "apt_code")
     private HouseInfo houseInfo;
+
+    public void setMember(Member member) {
+        this.member = member;
+        member.getFavorites().add(this);
+    }
+
+    public void setHouseInfo(HouseInfo houseInfo){
+        this.houseInfo = houseInfo;
+        houseInfo.getFavorites().add(this);
+    }
 }

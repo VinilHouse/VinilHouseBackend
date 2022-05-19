@@ -3,7 +3,9 @@ package com.ssafy.happyhouse5.service;
 
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import java.util.List;
 
 public interface MemberService {
 
@@ -20,4 +22,10 @@ public interface MemberService {
     Member findMemberByIdent(String ident);
 
     Member findMemberByEmail(String email);
+
+    Long enableFavorite(Long memberId, Long aptCode);
+
+    Long disableFavorite(Long memberId, Long aptCode);
+
+    List<HouseInfo> getFavoriteHouseInfo(Long memberId);
 }

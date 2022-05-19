@@ -5,6 +5,7 @@ import static com.ssafy.happyhouse5.dto.common.Response.*;
 import static org.springframework.http.HttpStatus.*;
 
 import com.ssafy.happyhouse5.dto.common.Response;
+import com.ssafy.happyhouse5.dto.favorite.FavoriteRequestDto;
 import com.ssafy.happyhouse5.dto.member.MemberLoginDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberResponseDto;
@@ -118,6 +119,22 @@ public class MemberRestController {
             throw new MemberNotFoundException();
         }
         return ResponseEntity.ok(success(new MemberResponseDto(findMember)));
+    }
+
+    @PostMapping("/favorites")
+    public ResponseEntity<Response> addFavorite(
+        @SessionAttribute(MEMBER_SESSION) Long memberId,
+        @RequestBody FavoriteRequestDto favoriteRequestDto) {
+        Long favoriteId = memberService.enableFavorite(memberId, favoriteRequestDto.getAptCode());
+        return ResponseEntity.ok(success(favoriteId));
+    }
+
+    @DeleteMapping("/favorites")
+    public ResponseEntity<Response> deleteFavorite(
+        @SessionAttribute(MEMBER_SESSION) Long memberId,
+        @RequestBody FavoriteRequestDto favoriteRequestDto) {
+        Long favoriteId = memberService.disableFavorite(memberId, favoriteRequestDto.getAptCode());
+        return ResponseEntity.ok(success(favoriteId));
     }
 
     private void checkHasBindingError(BindingResult bindingResult) {

@@ -1,13 +1,19 @@
 package com.ssafy.happyhouse5.service;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Favorite;
+import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
+import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
+import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
+import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,12 +60,12 @@ class MemberServiceTest {
     void login() {
         assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD))
             .isEqualTo(true);
-//        assertThat(memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD + GARBAGE_VALUE))
-//            .isEqualTo(false);
-//        assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD + GARBAGE_VALUE))
-//            .isEqualTo(false);
-//        assertThat(memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD))
-//            .isEqualTo(false);
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD + GARBAGE_VALUE));
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.login(MEMBER_ID + GARBAGE_VALUE, MEMBER_PASSWORD));
+        assertThat(memberService.login(MEMBER_ID, MEMBER_PASSWORD + GARBAGE_VALUE))
+            .isEqualTo(false);
     }
 
     @Test
@@ -105,5 +111,105 @@ class MemberServiceTest {
         assertThat(memberService.findMemberByEmail(MEMBER_EMAIL)).isNotNull();
         assertThrows(RuntimeException.class,
             () -> memberService.findMemberByEmail(MEMBER_EMAIL + GARBAGE_VALUE));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 등록 테스트")
+    void createFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        Long favoriteId = memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        Favorite favorite = em.find(Favorite.class, favoriteId);
+        assertThat(favorite).isNotNull();
+        assertThat(favorite.getMember()).isEqualTo(member);
+        assertThat(favorite.getHouseInfo()).isEqualTo(houseInfo);
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 등록 해제 테스트")
+    void disableFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        Long favoriteId = memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        Long disabledId = memberService.disableFavorite(member.getId(), houseInfo.getAptCode());
+
+        assertThat(favoriteId).isNotNull();
+        assertThat(disabledId).isNotNull();
+        assertThat(favoriteId).isEqualTo(disabledId);
+        assertThat(em.createQuery("select f from Favorite f").getResultList().size())
+            .isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("없는 아파트 등록 즐겨찾기 예외 테스트")
+    void notExistHouseInfoFavoriteTest() {
+        Member member = new Member("member1");
+        em.persist(member);
+
+        assertThrows(HouseInfoNotFoundException.class,
+            () -> memberService.enableFavorite(member.getId(), 999L));
+    }
+
+    @Test
+    @DisplayName("없는 멤버가 즐겨찾기 등록하는 예외 테스트")
+    void notExistMemberFavoriteTest() {
+        HouseInfo houseInfo = new HouseInfo("apt1");
+        em.persist(houseInfo);
+
+        assertThrows(MemberNotFoundException.class,
+            () -> memberService.enableFavorite(999L, houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 즐겨찾기 해제하는 경우 예외 테스트")
+    void notExistFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        assertThrows(FavoriteNotFoundException.class,
+            () -> memberService.disableFavorite(member.getId(), houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기 중복 등록 테스트")
+    void duplicateFavoriteTest() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo = new HouseInfo("apt1");
+
+        em.persist(member);
+        em.persist(houseInfo);
+
+        memberService.enableFavorite(member.getId(), houseInfo.getAptCode());
+        assertThrows(FavoriteDuplicateException.class,
+            () -> memberService.enableFavorite(member.getId(), houseInfo.getAptCode()));
+    }
+
+    @Test
+    @DisplayName("즐겨찾기로 등록된 HouseInfo 조회 테스트")
+    void findHouseInfoByMember() {
+        Member member = new Member("member1");
+        HouseInfo houseInfo1 = new HouseInfo("apt1");
+        HouseInfo houseInfo2 = new HouseInfo("apt2");
+
+        em.persist(member);
+        em.persist(houseInfo1);
+        em.persist(houseInfo2);
+
+        memberService.enableFavorite(member.getId(), houseInfo1.getAptCode());
+        memberService.enableFavorite(member.getId(), houseInfo2.getAptCode());
+
+        List<HouseInfo> favoriteHouseInfos = memberService.getFavoriteHouseInfo(member.getId());
+        assertThat(favoriteHouseInfos).contains(houseInfo1, houseInfo2);
     }
 }

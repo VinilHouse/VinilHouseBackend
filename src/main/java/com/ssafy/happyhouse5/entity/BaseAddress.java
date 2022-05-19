@@ -30,4 +30,8 @@ public class BaseAddress {
 
     @OneToMany(mappedBy = "baseAddress")
     private List<HouseInfo> houseInfos;
+
+    public BaseAddress(String dongName) {
+        this.dongName = dongName;
+    }
 }
