@@ -8,6 +8,7 @@ import com.ssafy.happyhouse5.entity.Member;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
+import com.ssafy.happyhouse5.exception.member.MemberDuplicateIdentException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.FavoriteRepository;
 import com.ssafy.happyhouse5.repository.HouseInfoRepository;
@@ -39,14 +40,15 @@ public class MemberServiceImpl implements MemberService {
             .password(memberRegisterDto.getPassword())
             .email(memberRegisterDto.getEmail())
             .build();
+        checkAlreadyExistMemberIdent(member.getIdent());
         memberRepository.save(member);
         return member.getId();
     }
 
     @Override
     public boolean login(String ident, String password) {
-        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident)
-        ).getPassword().equals(password);
+        return checkExistAndGetMember(memberRepository.findMemberByIdent(ident))
+            .getPassword().equals(password);
     }
 
     @Override
@@ -120,5 +122,11 @@ public class MemberServiceImpl implements MemberService {
     private HouseInfo checkExistAndGetHouseInfoByAptCode(Long aptCode) {
         return houseInfoRepository.findById(aptCode)
             .orElseThrow(HouseInfoNotFoundException::new);
+    }
+
+    private void checkAlreadyExistMemberIdent(String ident) {
+        if(memberRepository.findMemberByIdent(ident).isPresent()){
+            throw new MemberDuplicateIdentException();
+        }
     }
 }
