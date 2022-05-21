@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "base_address")
 public class BaseAddress {
 
     @Id

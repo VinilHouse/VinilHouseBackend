@@ -24,7 +24,11 @@ import org.hibernate.annotations.BatchSize;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"ident"})})
+@Table(
+    name = "member",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"ident"})
+    })
 public class Member {
 
     @Id

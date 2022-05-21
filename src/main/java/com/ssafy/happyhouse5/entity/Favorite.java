@@ -9,10 +9,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.Getter;
 
 @Entity
 @Getter
+@Table(name = "favorite")
 public class Favorite {
 
     @Id @GeneratedValue
