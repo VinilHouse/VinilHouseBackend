@@ -20,4 +20,6 @@ public interface HouseService {
     List<HouseInfo> findHouseInfoInRange(LocationRange range);
 
     List<HouseInfoWithRankDto> findFavoriteRankHouseInfo(Pageable pageable);
+
+    HouseInfo setIfImgNullAndGet(Long aptCode);
 }
