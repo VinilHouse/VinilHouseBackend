@@ -20,3 +20,8 @@ logging:
   level:
     com.ssafy.happyhouse5: debug
     org.hibernate.SQL: debug
+
+url:
+  apt:
+    search: https://apis.zigbang.com/v2/search?leaseYn=N&q=
+    image: https://apis.zigbang.com/apt/danjis/

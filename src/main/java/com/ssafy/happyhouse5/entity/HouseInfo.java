@@ -13,13 +13,16 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@Table(name = "house_info")
 public class HouseInfo {
 
     @Id @GeneratedValue
@@ -48,6 +51,7 @@ public class HouseInfo {
 
     private Double lng;
 
+    @Setter
     private String img;
 
     private Double avgPrice;

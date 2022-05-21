@@ -4,11 +4,14 @@ import static com.ssafy.happyhouse5.constant.MemberConst.*;
 import static com.ssafy.happyhouse5.dto.common.Response.success;
 
 import com.ssafy.happyhouse5.dto.common.Response;
+import com.ssafy.happyhouse5.dto.house.HouseDealItemDto;
 import com.ssafy.happyhouse5.dto.house.HouseDealResponseDto;
 import com.ssafy.happyhouse5.dto.house.HouseInfoResponseDto;
 import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
+import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import com.ssafy.happyhouse5.service.MemberService;
+import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -50,11 +53,15 @@ public class HouseRestController {
 
     @GetMapping("/deal")
     public ResponseEntity<Response> getHouseDeals(@RequestParam Long aptCode) {
-        return ResponseEntity.ok(
-            success(houseService.findHouseDealListByAptCode(aptCode).stream()
-                .map(HouseDealResponseDto::new)
-                .collect(Collectors.toList())
-            ));
+        HouseInfo houseInfo = houseService.setIfImgNullAndGet(aptCode);
+        List<HouseDealItemDto> houseDealItemDtoList =
+            houseService.findHouseDealListByAptCode(aptCode).stream()
+                .map(HouseDealItemDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(success(
+            new HouseDealResponseDto(new HouseInfoResponseDto(houseInfo), houseDealItemDtoList)
+        ));
     }
 
     @GetMapping("/search")
