@@ -76,8 +76,8 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
             .groupBy(baseAddress.sidoName)
+            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
             .fetch();
     }
 
@@ -92,9 +92,10 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
             .groupBy(baseAddress.gugunName)
-            .fetch();    }
+            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .fetch();
+    }
 
     @Override
     public List<LocationPriceDto> findAllByDongInRange(LocationRange range) {
@@ -107,9 +108,10 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .from(baseAddress)
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
-            .where(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
             .groupBy(baseAddress.dongName)
-            .fetch();    }
+            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .fetch();
+    }
 
     private BooleanExpression betweenLatLng(
         NumberExpression<Double> lat, NumberExpression<Double> lng, LocationRange range) {
