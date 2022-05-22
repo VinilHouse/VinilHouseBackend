@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -22,10 +23,17 @@ import org.hibernate.annotations.BatchSize;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@Table(name = "house_info")
+@Table(
+    name = "house_info",
+    indexes = @Index(
+        name = "i_aptName",
+        columnList = "aptName"
+    )
+)
 public class HouseInfo {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     @Column(name = "apt_code")
     private Long aptCode;
 
