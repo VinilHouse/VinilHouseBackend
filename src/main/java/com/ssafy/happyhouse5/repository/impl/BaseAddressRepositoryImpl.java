@@ -77,7 +77,7 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .groupBy(baseAddress.sidoName)
-            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .having(betweenLatLng(baseAddress.lat.avg(), baseAddress.lng.avg(), range))
             .fetch();
     }
 
@@ -93,7 +93,7 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .groupBy(baseAddress.gugunName)
-            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .having(betweenLatLng(baseAddress.lat.avg(), baseAddress.lng.avg(), range))
             .fetch();
     }
 
@@ -109,7 +109,7 @@ public class BaseAddressRepositoryImpl implements BaseAddressCustom {
             .leftJoin(
                 baseAddress.houseInfos, houseInfo)
             .groupBy(baseAddress.dongName)
-            .having(betweenLatLng(baseAddress.lat, baseAddress.lng, range))
+            .having(betweenLatLng(baseAddress.lat.avg(), baseAddress.lng.avg(), range))
             .fetch();
     }
 
