@@ -51,6 +51,10 @@ public class HouseInfo {
     @OneToMany(mappedBy = "houseInfo")
     private final List<Favorite> favorites = new ArrayList<>();
 
+    @BatchSize(size = 200)
+    @OneToMany(mappedBy = "houseInfo")
+    private final List<Comment> comments = new ArrayList<>();
+
     private String buildYear;
 
     private String jibun;

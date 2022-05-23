@@ -1,15 +1,21 @@
 package com.ssafy.happyhouse5.service.impl;
 
+import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
+import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
+import com.ssafy.happyhouse5.entity.Comment;
 import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.exception.comment.CommentNotFoundException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
+import com.ssafy.happyhouse5.exception.member.MemberAuthException;
 import com.ssafy.happyhouse5.exception.member.MemberDuplicateIdentException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
+import com.ssafy.happyhouse5.repository.CommentRepository;
 import com.ssafy.happyhouse5.repository.FavoriteRepository;
 import com.ssafy.happyhouse5.repository.HouseInfoRepository;
 import com.ssafy.happyhouse5.repository.MemberRepository;
@@ -31,6 +37,8 @@ public class MemberServiceImpl implements MemberService {
     private final FavoriteRepository favoriteRepository;
 
     private final HouseInfoRepository houseInfoRepository;
+
+    private final CommentRepository commentRepository;
 
     @Override
     @Transactional
@@ -85,8 +93,8 @@ public class MemberServiceImpl implements MemberService {
     public Long enableFavorite(Long memberId, Long aptCode) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
         HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
-        if(favoriteRepository.findByMemberAndHouseInfo(member, houseInfo)
-            .isPresent()){
+        if (favoriteRepository.findByMemberAndHouseInfo(member, houseInfo)
+            .isPresent()) {
             throw new FavoriteDuplicateException();
         }
 
@@ -115,6 +123,49 @@ public class MemberServiceImpl implements MemberService {
             .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public Long createComment(Long memberId, CommentRegistDto commentRegistDto) {
+        Long aptCode = commentRegistDto.getAptCode();
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+
+        Comment comment = new Comment();
+        comment.setMember(member);
+        comment.setHouseInfo(houseInfo);
+        comment.setTitle(commentRegistDto.getTitle());
+        comment.setContent(commentRegistDto.getContent());
+
+        commentRepository.save(comment);
+        return comment.getId();
+    }
+
+    @Override
+    @Transactional
+    public Long updateComment(Long memberId, CommentUpdateDto commentUpdateDto) {
+        Long commentId = commentUpdateDto.getCommentId();
+
+        Comment comment = checkExistAndGetCommentByCommentId(commentId);
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new MemberAuthException();
+        }
+
+        comment.setTitle(commentUpdateDto.getTitle());
+        comment.setContent(commentUpdateDto.getContent());
+        return commentId;
+    }
+
+    @Override
+    @Transactional
+    public Long deleteComment(Long memberId, Long commentId) {
+        Comment comment = checkExistAndGetCommentByCommentId(commentId);
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new MemberAuthException();
+        }
+        commentRepository.delete(comment);
+        return commentId;
+    }
+
     private Member checkExistAndGetMember(Optional<Member> optional) {
         return optional.orElseThrow(MemberNotFoundException::new);
     }
@@ -124,8 +175,13 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(HouseInfoNotFoundException::new);
     }
 
+    private Comment checkExistAndGetCommentByCommentId(Long commentId) {
+        return commentRepository.findById(commentId)
+            .orElseThrow(CommentNotFoundException::new);
+    }
+
     private void checkAlreadyExistMemberIdent(String ident) {
-        if(memberRepository.findMemberByIdent(ident).isPresent()){
+        if (memberRepository.findMemberByIdent(ident).isPresent()) {
             throw new MemberDuplicateIdentException();
         }
     }

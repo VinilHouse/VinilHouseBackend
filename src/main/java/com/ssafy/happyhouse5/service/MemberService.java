@@ -1,6 +1,8 @@
 package com.ssafy.happyhouse5.service;
 
 
+import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
+import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.HouseInfo;
@@ -28,4 +30,10 @@ public interface MemberService {
     Long disableFavorite(Long memberId, Long aptCode);
 
     List<HouseInfo> getFavoriteHouseInfo(Long memberId);
+
+    Long createComment(Long memberId, CommentRegistDto commentRegistDto);
+
+    Long updateComment(Long memberId, CommentUpdateDto commentUpdateDto);
+
+    Long deleteComment(Long memberId, Long commentId);
 }

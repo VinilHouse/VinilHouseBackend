@@ -3,6 +3,7 @@ package com.ssafy.happyhouse5.controller.restcontroller;
 import static com.ssafy.happyhouse5.constant.MemberConst.*;
 import static com.ssafy.happyhouse5.dto.common.Response.success;
 
+import com.ssafy.happyhouse5.dto.comment.CommentResponseDto;
 import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.dto.house.HouseDealItemDto;
 import com.ssafy.happyhouse5.dto.house.HouseDealResponseDto;
@@ -54,13 +55,25 @@ public class HouseRestController {
     @GetMapping("/deal")
     public ResponseEntity<Response> getHouseDeals(@RequestParam Long aptCode) {
         HouseInfo houseInfo = houseService.setIfImgNullAndGet(aptCode);
+
+        HouseInfoResponseDto houseInfoResponseDto = new HouseInfoResponseDto(houseInfo);
+
+        List<CommentResponseDto> commentResponseDtoList
+            = houseInfo.getComments().stream()
+            .map(CommentResponseDto::new)
+            .collect(Collectors.toList());
+
         List<HouseDealItemDto> houseDealItemDtoList =
             houseService.findHouseDealListByAptCode(aptCode).stream()
                 .map(HouseDealItemDto::new)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(success(
-            new HouseDealResponseDto(new HouseInfoResponseDto(houseInfo), houseDealItemDtoList)
+            new HouseDealResponseDto(
+                houseInfoResponseDto,
+                commentResponseDtoList,
+                houseDealItemDtoList
+            )
         ));
     }
 
