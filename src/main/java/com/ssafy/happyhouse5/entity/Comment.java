@@ -2,6 +2,7 @@ package com.ssafy.happyhouse5.entity;
 
 import static javax.persistence.FetchType.LAZY;
 
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,8 @@ import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
@@ -35,6 +38,14 @@ public class Comment {
     private String title;
 
     private String content;
+
+    @CreationTimestamp
+    @Column(name = "create_date")
+    private LocalDateTime created;
+
+    @UpdateTimestamp
+    @Column(name = "modify_date")
+    private LocalDateTime modified;
 
     public void setMember(Member member){
         this.member = member;
