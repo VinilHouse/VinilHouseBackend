@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 public class HouseInfoResponseDto {
 
     private Long aptCode;
-    private String aptName;
+    private String name;
     private String dongName;
     private int buildYear;
     private String jibun;
@@ -23,7 +23,7 @@ public class HouseInfoResponseDto {
 
     public HouseInfoResponseDto(HouseInfo houseInfo) {
         this.aptCode = houseInfo.getAptCode();
-        this.aptName = houseInfo.getAptName();
+        this.name = houseInfo.getAptName();
         this.dongName = houseInfo.getBaseAddress().getDongName();
         if (StringUtils.hasText(houseInfo.getBuildYear())) {
             this.buildYear = Integer.parseInt(houseInfo.getBuildYear());
