@@ -11,9 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @Table(name = "comment")
 @NoArgsConstructor
 public class Comment {
@@ -33,4 +35,13 @@ public class Comment {
     private String title;
 
     private String content;
+
+    public void setMember(Member member){
+        this.member = member;
+    }
+
+    public void setHouseInfo(HouseInfo houseInfo){
+        this.houseInfo = houseInfo;
+        houseInfo.getComments().add(this);
+    }
 }
