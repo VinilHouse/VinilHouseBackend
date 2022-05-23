@@ -91,7 +91,7 @@ class HouseServiceTest {
 
         assertThat(houseInfos)
             .extracting("houseInfoResponseDto")
-            .extracting("aptName")
+            .extracting("name")
             .containsExactly("apt1", "apt2", "apt3");
     }
 }
