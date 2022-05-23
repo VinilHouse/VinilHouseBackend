@@ -125,25 +125,31 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public Long createComment(Long memberId, Long aptCode, CommentRegistDto commentRegistDto) {
+    public Long createComment(Long memberId, CommentRegistDto commentRegistDto) {
+        Long aptCode = commentRegistDto.getAptCode();
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
         HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+
         Comment comment = new Comment();
         comment.setMember(member);
         comment.setHouseInfo(houseInfo);
         comment.setTitle(commentRegistDto.getTitle());
         comment.setContent(commentRegistDto.getContent());
+
         commentRepository.save(comment);
         return comment.getId();
     }
 
     @Override
     @Transactional
-    public Long updateComment(Long memberId, Long commentId, CommentUpdateDto commentUpdateDto) {
+    public Long updateComment(Long memberId, CommentUpdateDto commentUpdateDto) {
+        Long commentId = commentUpdateDto.getCommentId();
+
         Comment comment = checkExistAndGetCommentByCommentId(commentId);
         if (!comment.getMember().getId().equals(memberId)) {
             throw new MemberAuthException();
         }
+
         comment.setTitle(commentUpdateDto.getTitle());
         comment.setContent(commentUpdateDto.getContent());
         return commentId;

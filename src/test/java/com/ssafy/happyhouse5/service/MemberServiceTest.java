@@ -227,11 +227,11 @@ class MemberServiceTest {
         em.persist(houseInfo);
 
         CommentRegistDto commentRegistDto = new CommentRegistDto();
+        commentRegistDto.setAptCode(houseInfo.getAptCode());
         commentRegistDto.setTitle("comment title");
         commentRegistDto.setContent("comment content");
 
-        Long commentId = memberService.createComment(member.getId(), houseInfo.getAptCode()
-            , commentRegistDto);
+        Long commentId = memberService.createComment(member.getId(), commentRegistDto);
 
         Comment findComment = em.find(Comment.class, commentId);
 
@@ -247,46 +247,47 @@ class MemberServiceTest {
         em.persist(houseInfo);
 
         CommentRegistDto commentRegistDto = new CommentRegistDto();
+        commentRegistDto.setAptCode(houseInfo.getAptCode());
         commentRegistDto.setTitle("comment title");
         commentRegistDto.setContent("comment content");
 
         assertThrows(MemberNotFoundException.class, () ->
-            memberService.createComment(999L, houseInfo.getAptCode(), commentRegistDto));
+            memberService.createComment(999L, commentRegistDto));
     }
 
     @Test
     @DisplayName("존재하지 않는 아파트에 대한 댓글 등록 테스트")
     void createCommentTestNotExistApt() {
         Member member = memberService.findMemberByIdent(MEMBER_ID);
-        HouseInfo houseInfo = new HouseInfo("apt1");
 
         em.persist(member);
-        em.persist(houseInfo);
 
         CommentRegistDto commentRegistDto = new CommentRegistDto();
+        commentRegistDto.setAptCode(9876543210L);
         commentRegistDto.setTitle("new comment title");
         commentRegistDto.setContent("new comment content");
 
         assertThrows(HouseInfoNotFoundException.class,
-            () -> memberService.createComment(member.getId(), 9876543210L, commentRegistDto));
+            () -> memberService.createComment(member.getId(), commentRegistDto));
     }
 
     @Test
     @DisplayName("존재하지 않는 아파트 댓글에 대한 수정/삭제 테스트")
     void updateCommentNotExistCommentCaseTest() {
+        final long NOT_EXIST_COMMENT_ID = 9876543210L;
         Member member = memberService.findMemberByIdent(MEMBER_ID);
-
         em.persist(member);
 
         CommentUpdateDto commentUpdateDto = new CommentUpdateDto();
+        commentUpdateDto.setCommentId(NOT_EXIST_COMMENT_ID);
         commentUpdateDto.setTitle("comment title");
         commentUpdateDto.setContent("comment content");
 
         assertThrows(CommentNotFoundException.class,
-            () -> memberService.updateComment(member.getId(), 9876543210L, commentUpdateDto));
+            () -> memberService.updateComment(member.getId(), commentUpdateDto));
 
         assertThrows(CommentNotFoundException.class,
-            () -> memberService.deleteComment(member.getId(), 9876543210L));
+            () -> memberService.deleteComment(member.getId(), NOT_EXIST_COMMENT_ID));
     }
 
     @Test
@@ -304,10 +305,11 @@ class MemberServiceTest {
         em.persist(comment);
 
         CommentUpdateDto commentUpdateDto = new CommentUpdateDto();
+        commentUpdateDto.setCommentId(comment.getId());
         commentUpdateDto.setTitle("new Title");
         commentUpdateDto.setContent("new Content");
 
-        memberService.updateComment(member.getId(), comment.getId(), commentUpdateDto);
+        memberService.updateComment(member.getId(), commentUpdateDto);
 
         Comment updatedComment = em.find(Comment.class, comment.getId());
 

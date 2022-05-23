@@ -31,7 +31,7 @@ public class CommentController {
         @RequestBody CommentRegistDto commentRegistDto) {
 
         Long commentId = memberService.createComment(
-            memberId, commentRegistDto.getAptCode(), commentRegistDto);
+            memberId, commentRegistDto);
 
         return ResponseEntity.created(URI.create("/api/members/comments"))
             .body(Response.success(commentId));
@@ -43,7 +43,7 @@ public class CommentController {
         @RequestBody CommentUpdateDto commentUpdateDto) {
 
         Long updateCommentId = memberService.updateComment(
-            memberId, commentUpdateDto.getCommentId(), commentUpdateDto);
+            memberId, commentUpdateDto);
 
         return ResponseEntity.ok(Response.success(updateCommentId));
     }

@@ -31,9 +31,9 @@ public interface MemberService {
 
     List<HouseInfo> getFavoriteHouseInfo(Long memberId);
 
-    Long createComment(Long memberId, Long aptCode, CommentRegistDto commentRegistDto);
+    Long createComment(Long memberId, CommentRegistDto commentRegistDto);
 
-    Long updateComment(Long memberId, Long commentId, CommentUpdateDto commentUpdateDto);
+    Long updateComment(Long memberId, CommentUpdateDto commentUpdateDto);
 
     Long deleteComment(Long memberId, Long commentId);
 }
