@@ -11,5 +11,5 @@ public class HouseDealResponseDto {
 
     HouseInfoResponseDto houseInfoResponseDto;
     List<CommentResponseDto> commentResponseDtoList;
-    List<HouseDealItemDto> houseDealItemDtoList;
+    List<HouseAreaGroup> groupList;
 }

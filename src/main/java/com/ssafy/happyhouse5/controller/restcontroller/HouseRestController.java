@@ -5,6 +5,7 @@ import static com.ssafy.happyhouse5.dto.common.Response.success;
 
 import com.ssafy.happyhouse5.dto.comment.CommentResponseDto;
 import com.ssafy.happyhouse5.dto.common.Response;
+import com.ssafy.happyhouse5.dto.house.HouseAreaGroup;
 import com.ssafy.happyhouse5.dto.house.HouseDealItemDto;
 import com.ssafy.happyhouse5.dto.house.HouseDealResponseDto;
 import com.ssafy.happyhouse5.dto.house.HouseInfoResponseDto;
@@ -12,7 +13,10 @@ import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import com.ssafy.happyhouse5.service.MemberService;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -68,11 +72,29 @@ public class HouseRestController {
                 .map(HouseDealItemDto::new)
                 .collect(Collectors.toList());
 
+        Map<Integer, List<HouseDealItemDto>> map = new HashMap<>();
+        List<HouseDealItemDto> list;
+        for (HouseDealItemDto houseDealItemDto : houseDealItemDtoList) {
+            int py = (int) (Double.parseDouble(houseDealItemDto.getArea()) / 3.30579);
+            if (map.containsKey(py)) {
+                list = map.get(py);
+            } else {
+                list = new ArrayList<>();
+                map.put(py, list);
+            }
+            list.add(houseDealItemDto);
+        }
+
+        List<HouseAreaGroup> houseAreaGroupList = new ArrayList<>();
+        for (Integer key : map.keySet()) {
+            houseAreaGroupList.add(new HouseAreaGroup(key, map.get(key)));
+        }
+
         return ResponseEntity.ok(success(
             new HouseDealResponseDto(
                 houseInfoResponseDto,
                 commentResponseDtoList,
-                houseDealItemDtoList
+                houseAreaGroupList
             )
         ));
     }
