@@ -5,6 +5,7 @@ import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -19,6 +20,12 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedMethods("GET", "POST", "PATCH", "DELETE")
             .allowCredentials(true)
             .exposedHeaders("Set-Cookie");
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/img/**")
+            .addResourceLocations("classpath:/img/", "/img/");
     }
 
     @PostConstruct
