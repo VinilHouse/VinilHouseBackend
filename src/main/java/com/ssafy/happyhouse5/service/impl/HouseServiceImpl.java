@@ -3,6 +3,7 @@ package com.ssafy.happyhouse5.service.impl;
 import static com.ssafy.happyhouse5.constant.HouseConst.*;
 import static org.springframework.util.StringUtils.*;
 
+import com.ssafy.happyhouse5.dto.house.HouseInfoFilterRequestDto;
 import com.ssafy.happyhouse5.dto.house.HouseInfoWithRankDto;
 import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseDeal;
@@ -51,6 +52,12 @@ public class HouseServiceImpl implements HouseService {
     }
 
     @Override
+    public List<HouseInfo> findHouseInfoInRange(
+        LocationRange range, HouseInfoFilterRequestDto filter) {
+        return houseInfoRepository.findHouseInfoInRange(range, filter);
+    }
+
+    @Override
     public List<HouseInfoWithRankDto> findFavoriteRankHouseInfo(Pageable pageable) {
         return houseInfoRepository.findRankByFavorite(pageable);
     }
@@ -68,7 +75,7 @@ public class HouseServiceImpl implements HouseService {
             String imgLink = houseInfoImgSearchUtil.getImgLink(houseInfo.getAptName());
             if (hasText(imgLink)) {
                 houseInfo.setImg(imgLink);
-            }else{
+            } else {
                 houseInfo.setImg(HOUSE_INFO_IMG_NULL);
             }
         }

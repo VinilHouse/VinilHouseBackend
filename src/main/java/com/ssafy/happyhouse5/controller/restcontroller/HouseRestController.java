@@ -8,6 +8,7 @@ import com.ssafy.happyhouse5.dto.common.Response;
 import com.ssafy.happyhouse5.dto.house.HouseAreaGroup;
 import com.ssafy.happyhouse5.dto.house.HouseDealItemDto;
 import com.ssafy.happyhouse5.dto.house.HouseDealResponseDto;
+import com.ssafy.happyhouse5.dto.house.HouseInfoFilterRequestDto;
 import com.ssafy.happyhouse5.dto.house.HouseInfoResponseDto;
 import com.ssafy.happyhouse5.dto.locationavg.LocationRange;
 import com.ssafy.happyhouse5.entity.HouseInfo;
@@ -15,12 +16,12 @@ import com.ssafy.happyhouse5.service.HouseService;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 @RequestMapping("/api/houses")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class HouseRestController {
 
     private final HouseService houseService;
@@ -50,9 +52,16 @@ public class HouseRestController {
     }
 
     @GetMapping("/info/range")
-    public ResponseEntity<Response> getHouseInfosInRange(@Validated LocationRange range) {
+    public ResponseEntity<Response> getHouseInfosInRange(
+        @Validated LocationRange range,
+        HouseInfoFilterRequestDto filter) {
+
+        log.debug("range: {}", range);
+        log.debug("filter: {}", filter);
+
+        filter.convertToPyValue();
         return ResponseEntity.ok(
-            success(houseService.findHouseInfoInRange(range).stream()
+            success(houseService.findHouseInfoInRange(range, filter).stream()
                 .map(HouseInfoResponseDto::new)
                 .collect(Collectors.toList())
             ));
