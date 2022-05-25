@@ -3,10 +3,13 @@ package com.ssafy.happyhouse5.service;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
+import com.ssafy.happyhouse5.dto.member.MemberLocationRegistDto;
+import com.ssafy.happyhouse5.dto.member.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.entity.MemberLocation;
 import java.util.List;
 
 public interface MemberService {
@@ -36,4 +39,12 @@ public interface MemberService {
     Long updateComment(Long memberId, CommentUpdateDto commentUpdateDto);
 
     Long deleteComment(Long memberId, Long commentId);
+
+    Long createMemberLocation(Long memberId, MemberLocationRegistDto registDto);
+
+    Long updateMemberLocation(Long memberId, MemberLocationUpdateDto updateDto);
+
+    Long deleteMemberLocation(Long memberId, Long locationId);
+
+    List<MemberLocation> getMemberLocation();
 }
