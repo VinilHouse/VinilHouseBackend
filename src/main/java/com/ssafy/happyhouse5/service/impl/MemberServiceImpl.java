@@ -2,8 +2,8 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
-import com.ssafy.happyhouse5.dto.member.MemberLocationRegistDto;
-import com.ssafy.happyhouse5.dto.member.MemberLocationUpdateDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationRegistDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Comment;
@@ -178,6 +178,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Long createMemberLocation(Long memberId, MemberLocationRegistDto registDto) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
 
@@ -195,6 +196,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Long updateMemberLocation(Long memberId, MemberLocationUpdateDto updateDto) {
         checkExistAndGetMember(memberRepository.findById(memberId));
         MemberLocation memberLocation
@@ -215,6 +217,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    @Transactional
     public Long deleteMemberLocation(Long memberId, Long locationId) {
         MemberLocation memberLocation
             = checkExistAndGetMemberLocationByLocationId(locationId);

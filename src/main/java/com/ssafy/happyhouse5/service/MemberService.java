@@ -3,8 +3,8 @@ package com.ssafy.happyhouse5.service;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
-import com.ssafy.happyhouse5.dto.member.MemberLocationRegistDto;
-import com.ssafy.happyhouse5.dto.member.MemberLocationUpdateDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationRegistDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.HouseInfo;
