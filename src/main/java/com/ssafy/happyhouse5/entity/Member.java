@@ -49,6 +49,7 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Favorite> favorites = new ArrayList<>();
 
+    @BatchSize(size = 30)
     @OneToMany(mappedBy = "member")
     private final List<MemberLocation> locations = new ArrayList<>();
 

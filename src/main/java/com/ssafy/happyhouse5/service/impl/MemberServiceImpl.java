@@ -2,7 +2,11 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
+import com.ssafy.happyhouse5.dto.house.HouseInfoResponseDto;
+import com.ssafy.happyhouse5.dto.member.dist.DistDto;
+import com.ssafy.happyhouse5.dto.member.dist.DistGroup;
 import com.ssafy.happyhouse5.dto.member.location.MemberLocationRegistDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationResponse;
 import com.ssafy.happyhouse5.dto.member.location.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
@@ -27,6 +31,7 @@ import com.ssafy.happyhouse5.repository.MemberLocationRepository;
 import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
 import com.ssafy.happyhouse5.util.AddressConverter;
+import com.ssafy.happyhouse5.util.KilometerConverter;
 import com.ssafy.happyhouse5.util.LatLng;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +56,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberLocationRepository memberLocationRepository;
 
     private final AddressConverter addressConverter;
+
+    private final KilometerConverter killometerConverter;
 
     @Override
     @Transactional
@@ -236,6 +243,29 @@ public class MemberServiceImpl implements MemberService {
         return memberLocationRepository.findByMemberId(memberId);
     }
 
+    @Override
+    public DistDto getDistList(Long memberId, Long aptCode) {
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        List<MemberLocation> locations = member.getLocations();
+
+        HouseInfo houseInfo = checkExistAndGetHouseInfoByAptCode(aptCode);
+
+        return new DistDto(
+            new HouseInfoResponseDto(houseInfo),
+            locations.stream()
+                .map(l -> {
+                    DistGroup distGroup = new DistGroup(new MemberLocationResponse(l));
+                    distGroup.setDist(calcDist(houseInfo, l));
+                    return distGroup;
+                })
+                .collect(Collectors.toList()));
+    }
+
+    private Double calcDist(HouseInfo houseInfo, MemberLocation memberLocation) {
+        return killometerConverter.convert(houseInfo.getLat(), memberLocation.getLat(),
+            houseInfo.getLng(), memberLocation.getLng());
+    }
+
     private Member checkExistAndGetMember(Optional<Member> optional) {
         return optional.orElseThrow(MemberNotFoundException::new);
     }
@@ -261,9 +291,10 @@ public class MemberServiceImpl implements MemberService {
             .orElseThrow(MemberLocationNotFoundException::new);
     }
 
-    private void checkDuplicateMemberLocationAlias(Long memberId, MemberLocationRegistDto registDto) {
-        if(memberLocationRepository.findByMemberId(memberId).stream()
-            .anyMatch(l -> registDto.getAlias().equals(l.getAlias()))){
+    private void checkDuplicateMemberLocationAlias(Long memberId,
+        MemberLocationRegistDto registDto) {
+        if (memberLocationRepository.findByMemberId(memberId).stream()
+            .anyMatch(l -> registDto.getAlias().equals(l.getAlias()))) {
             throw new MemberLocationAliasDuplicateException();
         }
     }

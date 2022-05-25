@@ -3,6 +3,7 @@ package com.ssafy.happyhouse5.service;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
+import com.ssafy.happyhouse5.dto.member.dist.DistDto;
 import com.ssafy.happyhouse5.dto.member.location.MemberLocationRegistDto;
 import com.ssafy.happyhouse5.dto.member.location.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
@@ -47,4 +48,6 @@ public interface MemberService {
     Long deleteMemberLocation(Long memberId, Long locationId);
 
     List<MemberLocation> getMemberLocation(Long memberId);
+
+    DistDto getDistList(Long memberId, Long aptCode);
 }
