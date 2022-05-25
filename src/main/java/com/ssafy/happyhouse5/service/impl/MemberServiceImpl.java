@@ -17,6 +17,7 @@ import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberAuthException;
 import com.ssafy.happyhouse5.exception.member.MemberDuplicateIdentException;
+import com.ssafy.happyhouse5.exception.member.MemberLocationAliasDuplicateException;
 import com.ssafy.happyhouse5.exception.member.MemberLocationNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.CommentRepository;
@@ -181,6 +182,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     public Long createMemberLocation(Long memberId, MemberLocationRegistDto registDto) {
         Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        checkDuplicateMemberLocationAlias(memberId, registDto);
 
         MemberLocation memberLocation = new MemberLocation();
         memberLocation.setMember(member);
@@ -257,5 +259,12 @@ public class MemberServiceImpl implements MemberService {
     private MemberLocation checkExistAndGetMemberLocationByLocationId(Long locationId) {
         return memberLocationRepository.findById(locationId)
             .orElseThrow(MemberLocationNotFoundException::new);
+    }
+
+    private void checkDuplicateMemberLocationAlias(Long memberId, MemberLocationRegistDto registDto) {
+        if(memberLocationRepository.findByMemberId(memberId).stream()
+            .anyMatch(l -> registDto.getAlias().equals(l.getAlias()))){
+            throw new MemberLocationAliasDuplicateException();
+        }
     }
 }
