@@ -6,4 +6,5 @@ public interface MemberConst {
     String MEMBER_BAD_AUTH_MSG = "not authorized member.";
     String MEMBER_NOT_FOUND_MSG = "not found member";
     String MEMBER_DUPLICATE_IDENT_MSG = "duplicate member ident. select another";
+    String MEMBER_LOCATION_NOT_FOUND_MSG = "not found member location.";
 }
