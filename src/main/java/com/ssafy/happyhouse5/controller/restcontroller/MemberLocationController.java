@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttribute;
@@ -35,7 +36,7 @@ public class MemberLocationController {
     @PostMapping
     public ResponseEntity<Response> postMemberLocation(
         @SessionAttribute(MEMBER_SESSION) Long memberId,
-        MemberLocationRegistDto registDto) {
+        @RequestBody MemberLocationRegistDto registDto) {
         Long locationId = memberService.createMemberLocation(memberId, registDto);
         return ResponseEntity.ok(Response.success(locationId));
     }
@@ -43,7 +44,7 @@ public class MemberLocationController {
     @PutMapping
     public ResponseEntity<Response> updateMemberLocation(
         @SessionAttribute(MEMBER_SESSION) Long memberId,
-        MemberLocationUpdateDto updateDto
+        @RequestBody MemberLocationUpdateDto updateDto
     ) {
         Long locationId = memberService.updateMemberLocation(memberId, updateDto);
         return ResponseEntity.ok(Response.success(locationId));
@@ -52,7 +53,7 @@ public class MemberLocationController {
     @DeleteMapping
     public ResponseEntity<Response> deleteMemberLocation(
         @SessionAttribute(MEMBER_SESSION) Long memberId,
-        Long locationId) {
+        @RequestBody Long locationId) {
         memberService.deleteMemberLocation(memberId, locationId);
         return ResponseEntity.ok(Response.success(locationId));
     }
