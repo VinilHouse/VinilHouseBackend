@@ -59,17 +59,12 @@ public class HouseRestController {
         log.debug("range: {}", range);
         log.debug("filter: {}", filter);
 
+        filter.convertToPyValue();
         return ResponseEntity.ok(
             success(houseService.findHouseInfoInRange(range, filter).stream()
                 .map(HouseInfoResponseDto::new)
                 .collect(Collectors.toList())
             ));
-
-//        return ResponseEntity.ok(
-//            success(houseService.findHouseInfoInRange(range).stream()
-//                .map(HouseInfoResponseDto::new)
-//                .collect(Collectors.toList())
-//            ));
     }
 
     @GetMapping("/deal")
