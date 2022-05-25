@@ -1,4 +1,4 @@
-package com.ssafy.happyhouse5.dto.member;
+package com.ssafy.happyhouse5.dto.member.location;
 
 import lombok.Data;
 
