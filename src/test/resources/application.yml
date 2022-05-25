@@ -25,3 +25,8 @@ url:
   apt:
     search: https://apis.zigbang.com/v2/search?leaseYn=N&q=
     image: https://apis.zigbang.com/apt/danjis/
+  geo:
+    converter: SECRET_VALUE
+
+key:
+  kakao: SECRET_VALUE

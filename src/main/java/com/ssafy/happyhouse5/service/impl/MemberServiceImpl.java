@@ -2,24 +2,32 @@ package com.ssafy.happyhouse5.service.impl;
 
 import com.ssafy.happyhouse5.dto.comment.CommentRegistDto;
 import com.ssafy.happyhouse5.dto.comment.CommentUpdateDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationRegistDto;
+import com.ssafy.happyhouse5.dto.member.location.MemberLocationUpdateDto;
 import com.ssafy.happyhouse5.dto.member.MemberRegisterDto;
 import com.ssafy.happyhouse5.dto.member.MemberUpdateDto;
 import com.ssafy.happyhouse5.entity.Comment;
 import com.ssafy.happyhouse5.entity.Favorite;
 import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.entity.Member;
+import com.ssafy.happyhouse5.entity.MemberLocation;
 import com.ssafy.happyhouse5.exception.comment.CommentNotFoundException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteDuplicateException;
 import com.ssafy.happyhouse5.exception.favorite.FavoriteNotFoundException;
 import com.ssafy.happyhouse5.exception.house.HouseInfoNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberAuthException;
 import com.ssafy.happyhouse5.exception.member.MemberDuplicateIdentException;
+import com.ssafy.happyhouse5.exception.member.MemberLocationAliasDuplicateException;
+import com.ssafy.happyhouse5.exception.member.MemberLocationNotFoundException;
 import com.ssafy.happyhouse5.exception.member.MemberNotFoundException;
 import com.ssafy.happyhouse5.repository.CommentRepository;
 import com.ssafy.happyhouse5.repository.FavoriteRepository;
 import com.ssafy.happyhouse5.repository.HouseInfoRepository;
+import com.ssafy.happyhouse5.repository.MemberLocationRepository;
 import com.ssafy.happyhouse5.repository.MemberRepository;
 import com.ssafy.happyhouse5.service.MemberService;
+import com.ssafy.happyhouse5.util.AddressConverter;
+import com.ssafy.happyhouse5.util.LatLng;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +47,10 @@ public class MemberServiceImpl implements MemberService {
     private final HouseInfoRepository houseInfoRepository;
 
     private final CommentRepository commentRepository;
+
+    private final MemberLocationRepository memberLocationRepository;
+
+    private final AddressConverter addressConverter;
 
     @Override
     @Transactional
@@ -166,6 +178,64 @@ public class MemberServiceImpl implements MemberService {
         return commentId;
     }
 
+    @Override
+    @Transactional
+    public Long createMemberLocation(Long memberId, MemberLocationRegistDto registDto) {
+        Member member = checkExistAndGetMember(memberRepository.findById(memberId));
+        checkDuplicateMemberLocationAlias(memberId, registDto);
+
+        MemberLocation memberLocation = new MemberLocation();
+        memberLocation.setMember(member);
+        memberLocation.setAddress(registDto.getAddress());
+        memberLocation.setAlias(registDto.getAlias());
+
+        LatLng latLng = addressConverter.convert(registDto.getAddress());
+        memberLocation.setLat(latLng.getLat());
+        memberLocation.setLng(latLng.getLng());
+
+        memberLocationRepository.save(memberLocation);
+        return memberLocation.getId();
+    }
+
+    @Override
+    @Transactional
+    public Long updateMemberLocation(Long memberId, MemberLocationUpdateDto updateDto) {
+        checkExistAndGetMember(memberRepository.findById(memberId));
+        MemberLocation memberLocation
+            = checkExistAndGetMemberLocationByLocationId(updateDto.getId());
+
+        if (!memberLocation.getMember().getId().equals(memberId)) {
+            throw new MemberAuthException();
+        }
+
+        memberLocation.setAddress(updateDto.getAddress());
+        memberLocation.setAlias(updateDto.getAlias());
+
+        LatLng latLng = addressConverter.convert(updateDto.getAddress());
+        memberLocation.setLat(latLng.getLat());
+        memberLocation.setLng(latLng.getLng());
+
+        return memberLocation.getId();
+    }
+
+    @Override
+    @Transactional
+    public Long deleteMemberLocation(Long memberId, Long locationId) {
+        MemberLocation memberLocation
+            = checkExistAndGetMemberLocationByLocationId(locationId);
+        if (!memberLocation.getMember().getId().equals(memberId)) {
+            throw new MemberAuthException();
+        }
+        memberLocationRepository.delete(memberLocation);
+        return memberLocation.getId();
+    }
+
+    @Override
+    public List<MemberLocation> getMemberLocation(Long memberId) {
+        checkExistAndGetMember(memberRepository.findById(memberId));
+        return memberLocationRepository.findByMemberId(memberId);
+    }
+
     private Member checkExistAndGetMember(Optional<Member> optional) {
         return optional.orElseThrow(MemberNotFoundException::new);
     }
@@ -183,6 +253,18 @@ public class MemberServiceImpl implements MemberService {
     private void checkAlreadyExistMemberIdent(String ident) {
         if (memberRepository.findMemberByIdent(ident).isPresent()) {
             throw new MemberDuplicateIdentException();
+        }
+    }
+
+    private MemberLocation checkExistAndGetMemberLocationByLocationId(Long locationId) {
+        return memberLocationRepository.findById(locationId)
+            .orElseThrow(MemberLocationNotFoundException::new);
+    }
+
+    private void checkDuplicateMemberLocationAlias(Long memberId, MemberLocationRegistDto registDto) {
+        if(memberLocationRepository.findByMemberId(memberId).stream()
+            .anyMatch(l -> registDto.getAlias().equals(l.getAlias()))){
+            throw new MemberLocationAliasDuplicateException();
         }
     }
 }
