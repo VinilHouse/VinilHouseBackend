@@ -49,6 +49,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private final List<Favorite> favorites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private final List<MemberLocation> locations = new ArrayList<>();
+
     public Member(String ident) {
         this.ident = ident;
     }
