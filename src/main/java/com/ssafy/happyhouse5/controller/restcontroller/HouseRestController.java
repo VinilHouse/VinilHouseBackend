@@ -15,6 +15,7 @@ import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,6 +101,7 @@ public class HouseRestController {
         for (Integer key : map.keySet()) {
             houseAreaGroupList.add(new HouseAreaGroup(key, map.get(key)));
         }
+        Collections.sort(houseAreaGroupList);
 
         return ResponseEntity.ok(success(
             new HouseDealResponseDto(
