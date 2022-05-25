@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class HouseDealItemDto {
+public class HouseDealItemDto implements Comparable<HouseDealItemDto> {
 
     private Long id;
     private Long aptCode;
@@ -30,5 +30,19 @@ public class HouseDealItemDto {
         this.floor = houseDeal.getFloor();
         this.type = houseDeal.getType();
         this.rentMoney = houseDeal.getRentMoney();
+    }
+
+    @Override
+    public int compareTo(HouseDealItemDto o) {
+        if (dealYear != o.dealYear) {
+            return dealYear - o.dealYear;
+        }
+        if (dealMonth != o.dealMonth) {
+            return dealMonth - o.dealMonth;
+        }
+        if(dealDay != o.dealDay){
+            return dealDay - o.dealDay;
+        }
+        return 0;
     }
 }

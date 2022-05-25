@@ -15,10 +15,11 @@ import com.ssafy.happyhouse5.entity.HouseInfo;
 import com.ssafy.happyhouse5.service.HouseService;
 import com.ssafy.happyhouse5.service.MemberService;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,6 @@ public class HouseRestController {
         log.debug("range: {}", range);
         log.debug("filter: {}", filter);
 
-        filter.convertToPyValue();
         return ResponseEntity.ok(
             success(houseService.findHouseInfoInRange(range, filter).stream()
                 .map(HouseInfoResponseDto::new)
@@ -83,14 +83,14 @@ public class HouseRestController {
                 .map(HouseDealItemDto::new)
                 .collect(Collectors.toList());
 
-        Map<Integer, List<HouseDealItemDto>> map = new HashMap<>();
-        List<HouseDealItemDto> list;
+        Map<Integer, Set<HouseDealItemDto>> map = new HashMap<>();
+        Set<HouseDealItemDto> list;
         for (HouseDealItemDto houseDealItemDto : houseDealItemDtoList) {
             int py = (int) (Double.parseDouble(houseDealItemDto.getArea()) / 3.30579);
             if (map.containsKey(py)) {
                 list = map.get(py);
             } else {
-                list = new ArrayList<>();
+                list = new TreeSet<>();
                 map.put(py, list);
             }
             list.add(houseDealItemDto);
@@ -100,7 +100,6 @@ public class HouseRestController {
         for (Integer key : map.keySet()) {
             houseAreaGroupList.add(new HouseAreaGroup(key, map.get(key)));
         }
-        Collections.sort(houseAreaGroupList);
 
         return ResponseEntity.ok(success(
             new HouseDealResponseDto(

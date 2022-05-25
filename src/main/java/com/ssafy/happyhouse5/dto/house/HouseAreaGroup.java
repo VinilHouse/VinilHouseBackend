@@ -1,6 +1,6 @@
 package com.ssafy.happyhouse5.dto.house;
 
-import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 public class HouseAreaGroup implements Comparable<HouseAreaGroup> {
 
     private Integer py;
-    private List<HouseDealItemDto> dealList;
+    private Set<HouseDealItemDto> deals;
 
     @Override
     public int compareTo(HouseAreaGroup o) {
