@@ -46,5 +46,5 @@ public interface MemberService {
 
     Long deleteMemberLocation(Long memberId, Long locationId);
 
-    List<MemberLocation> getMemberLocation();
+    List<MemberLocation> getMemberLocation(Long memberId);
 }
