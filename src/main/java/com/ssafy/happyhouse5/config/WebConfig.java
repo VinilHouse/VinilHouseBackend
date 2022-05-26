@@ -16,8 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry
             .addMapping("/**")
             .allowedOrigins("http://127.0.0.1:3000/", "http://localhost:3000/",
-                "http://localhost:8090/", "http://vinilhouse.ga:8090/", "http://vinilhouse.ga:80/",
-                "http://vinilhouse.ga/")
+                "http://localhost:8090/", "http://vinilhouse.ga:8090/",
+                "http://vinilhouse.ga:80/", "http://vinilhouse.ga/",
+                "http://www.vinilhouse.ga:80/", "http://www.vinilhouse.ga/")
             .allowedMethods("GET", "POST", "PATCH", "DELETE")
             .allowCredentials(true)
             .exposedHeaders("Set-Cookie");
